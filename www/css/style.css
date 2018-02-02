@@ -1,0 +1,61 @@
+.hide{display: none;}
+.pull-right {float: right}
+.prod.col-6{padding: 0;}
+.card-body{padding: 8px;}
+.prod .img-container {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.prod .card-img-top {
+    flex-shrink: 0;
+    min-width: 100%;
+    /*min-height: 100%*/
+    }
+.prod .card-title {
+    display: -webkit-box;
+    max-width: 170px;
+    height: 40px;
+    margin: 0 auto;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 6px;
+    text-overflow: ellipsis;
+}
+.prod .price{
+    float: right;
+}
+.list-group-flush:first-child .list-group-item span:first-child {
+    width: 20px;
+    display: inline-block;
+}
+.so-list li.list-group-item {
+    font-size: 16px;
+}
+.list-group-flush:first-child .list-group-item span:last-child {
+    display: inline-block;
+    float: right;
+}
+.tab-content .tab-pane{
+    height: calc(100vh - 98px);
+    overflow: auto;
+}
+.mt-6 {
+    margin-top: 4rem;
+}
+.page.cart .nav-tabs .nav-item {
+    margin-bottom: -2px;
+}
+
+.page.cart .total-val {display: inline;float:right}
+.page.cart .total label {font-size: 1.5rem;font-weight: 500}
+.page.cart .partner-select,.page.cart .date-select{display: inline;float: right}
+
+.page.cart .buttons{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}

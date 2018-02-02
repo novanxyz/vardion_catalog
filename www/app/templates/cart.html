@@ -1,0 +1,66 @@
+<main data-role="page" class="page cart tab-content mt-5" id="carts" >
+    <section>
+        <ul class="nav nav-tabs" id="orders" role="tablist">
+            <li class="nav-item active" >
+                <a class="nav-link active" data-toggle="tab"  role="tab"  
+                   t-att-id="'tab-'+ cart.cid" t-att-href="'#so'+cart.cid" t-att-aria-controls="'so' + cart.cid" >
+                    <t t-esc="cart.get_name()"/>
+                </a>
+            </li>
+            <li t-foreach="orders.models" t-as="o" class="nav-item" t-if="o.cid != cart.cid">
+                <a class="nav-link " data-toggle="tab"  role="tab"  
+                   t-att-id="'tab-'+ o.cid" t-att-href="'#so'+o.cid" t-att-aria-controls="'so' + o.cid" >
+                    <t t-esc="o.get_name()"/>
+                </a>
+            </li>
+        </ul>        
+        <div class="tab-content order" id="order">
+            <div role="tabpanel" class="tab-pane active"  t-att-id="'so'+cart.cid" t-att-aria-labelledby="'so'+cart.cid">
+                <t t-log="cart"/>
+                <div class="head bg-primary text-white p-3">
+                    <div class="container">
+                        <div class="total">
+                            <label>Total</label>
+                            <h4 class="total-val ">
+                                <t t-esc='format_currency(cart.get_total_price())'/>
+                            </h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 style="display:inline">Partner</h6>
+                                <a class="btn partner-select"><i class="material-icons">contacts</i></a>
+                                <h6 class="partner-val" >
+                                    <t t-esc='cart.get_partner()'/>
+                                </h6>
+                            </div>
+                            <div class="col-6">
+                                <h6 style="display:inline">Date</h6>
+                                <a class="btn date-select"><i class="material-icons">event</i></a>
+                                <h6 class="date-val" >
+                                    <t t-esc='cart.get_order_date()'/>
+                                </h6>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-warning" role="alert" style="margin-bottom: 0;min-height: 56px;">
+                    <t t-raw="get_notification()"/>
+                </div>
+                <div class="container so-list">
+                    <ul class="list-group list-group-flush">
+<!--                        <li t-foreach="o.orderlines"  t-as="line" t-att-id="'line-' + line.cid " class="list-group-item ">
+                            <span class="qty"><t t-esc="line.get_qty()"/></span>
+                            <span class="item"><t t-esc="line.get_display_name()"/></span>
+                            <span class="price"><t t-esc="format_currency(line.get_price())"/> </span>
+                        </li>-->
+                    </ul>
+                    <div class="row buttons">
+                        <a class="btn btn-danger text-white col-6 cancel">Cancel</a>
+                        <a class="btn btn-success text-white col-6 confirm">Confirm</a>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </section>
+</main>

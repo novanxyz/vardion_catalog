@@ -1,0 +1,30 @@
+<main data-role="page" class="page catalogs tab-content mt-6  " id="catalog" >
+    <section class="container categs" id="categs">
+        <div class="card-deck ">
+            <div  class="card text-center mb-3 categ"  t-foreach="products.get_categories()" t-as="cat" t-att-data-categ_id="cat.id">
+                <div class="card-body">
+                  <h4 class="card-title"><t t-esc="cat.name"/></h4>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="container prods" id="prods">
+        <div class="container">
+            <div class="row grid">
+                <div  class="prod col-6"  t-foreach="products.models" t-as="p" t-att-data-categ_id="p.get('categ_id').id" t-att-data-id="p.id">
+                    <div class="card mb-3">
+                        <div class="img-container">
+                            <img class="card-img-top" t-att-src="p.get_image_url()" t-att-alt="p.get('display_name')"
+                                 onerror="this.src='img/placeholder.png';"/>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title"><t t-esc="p.get_display_name()"/></h6>
+                          <p class="card-text price"><t t-esc="format_currency(p.get_price())"/></p>
+                        </div>
+                        <a class="btn btn-success btn-block text-white add">Add</a>
+                    </div>
+                </div>                        
+            </div>
+        </div>
+    </section>
+</main>
