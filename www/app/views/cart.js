@@ -65,13 +65,13 @@ define(function(require){
         get_notification:function(){
             $('.order .alert').show();            
             if (!this.cart.partner){
-                return '<span>No Partner selectedyet<span><a class="pull-right partner-select"><i class="material-icons">contacts</i></a>';
+                return '<span>No Partner selected<span><a class="pull-right partner-select"><i class="material-icons">contacts</i></a>';
             }                        
             if (!this.cart.partner.email ) {
                 return '<span>Partner doesn\'t have email<span><a class="pull-right partner-select"><i class="material-icons">contacts</i></a>';
             }
             if (!this.cart.partner.id ) {
-                return '<span>Partner not registered yet<span><a class="pull-right register_contact"><i class="material-icons">cached</i></a>';
+                return '<span>Partner not registered<span><a class="pull-right register_contact"><i class="material-icons">cached</i></a>';
             }
             
             if (this.contact){
