@@ -103,6 +103,23 @@ var n = this,
             return partner;
             
         },
+        partnerToContact:function(partner){
+            var contact = {"displayName": partner.name};
+            
+            if (partner.phone){
+                contact.phoneNumbers.push(new ContactField('work',partner.phone,false));
+            }
+            if (partner.email){
+                contact.emails.push(new ContactField('work',partner.email,false));
+            }
+            if (partner.street){
+                var address = new ContactAddress({type:'work',streetAddress:partner.street,
+                                                locality:partner.city, postalCode:partner.zip});
+                contact.addresses.push(address);
+            }
+                    
+            return contact;
+        }
     }
     return Utils
 })

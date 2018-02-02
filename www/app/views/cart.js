@@ -56,6 +56,9 @@ define(function(require){
             });
         },
         update_contact:function(){
+            if (! this.contact) {
+                this.contact =  navigator.contacts.create(Utils.partnerToContact(this.cart.partner));
+            }
             this.contact.ims.push(new ContactField('vardion',this.cart.partner.id,true));
             this.contact.save(function(){console.log(this.contact, ' saved');},null);
         },
@@ -72,12 +75,12 @@ define(function(require){
             }
             
             if (this.contact){
-                var vardion_id = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;
-                if (! vardion_id) {
+                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;                
+                if (vardion_id != this.cart.partner.id) {
                     return '<span>Partner not synchronized yet<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';
-                }                
-            }else{
-                
+                }
+            }else{                
+                return '<span>Partner not locally saved<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';                
             }
             
         },
