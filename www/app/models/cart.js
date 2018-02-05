@@ -23,7 +23,7 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
         initialize:function(json,app){
             Base.Model.prototype.initialize.apply(this,arguments);           
             this.orderlines = new OrderlineCollection([],app);    
-            this.localStorage: new localstorage.LocalStorage(this.app.DB_ID + this._name),            
+            this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name),            
             this.set('order_date',new Date());
         },       
         add_product:function(product,options){

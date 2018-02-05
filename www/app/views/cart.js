@@ -12,20 +12,19 @@ define(function(require){
            'click a.register_contact'   : 'register_contact',
            'click a.update_contact'     : 'update_contact',
            'click a.add_cart'           : 'add_cart',
-           'click a.cancel_cart'        : 'cancel_cart',
-           
+           'click a.cancel_cart'        : 'cancel_cart',           
        },
        initialize:function(app){
           this.app = app;
           Base.Page.prototype.initialize.apply(this,arguments);                    
           //this.app.qweb.add_template(Utils.make_template('cart',tmpl) );
           
-          var cart_id = localStorage['cart'];
+          var cart_id = localStorage[this.app.DB_ID + '_' + Cart.prototype._name];
           var cart = {'user_id':app.user.uid};
-          console.log(cart_id);
+          console.log(this.app.DB_ID + Cart.prototype._name , cart_id);
           if (cart_id){
               cart_id = cart_id.split(',')[0];
-              cart = JSON.parse(localStorage['cart'+ cart_id] || '{}');
+              cart = JSON.parse(localStorage[this.app.DB_ID + '_' + Cart.prototype._name + '-' + cart_id] || '{}');
           }            
           this.cart =  new Cart(cart,app);                    
           this.cart.bind('request',_.bind(this.show_loading,this));
@@ -53,25 +52,28 @@ define(function(require){
         },
         select_partner:function(){
             var self = this;
+            console.log(this,navigator.contacts);
             navigator.contacts.pickContact(function(contact){                
                 self.cart.partner = Utils.contactToPartner(contact);
                 console.log(contact,self.cart.partner);
                 self.contact = contact;
                 self.render();
+            },function(err){
+                console.log('Error: ' + err);
             });
         },
         register_contact:function(){
-            var rpc = new Backbone.Rpc({url: this.app.url + '/web/dataset/call'});
+            var rpc = this.app.get_rpc('res.partner');
             var self = this;
             return rpc.call('res.partner','find_or_create',[this.cart.partner]).then(function(res){                
-                console.log(res);
-                self.cart.partner.id = res
+                console.log(res,self.contact);
+                self.cart.partner.id = res;
                 if (!self.contact.ims){
                     self.contact.ims = [];
                 }
                 
                 self.contact.ims.push(new ContactField('vardion',self.cart.partner.id,true));
-                self.contact.save(function(){console.log(self.contact, ' saved');},null);
+                self.contact.save(function(ret){console.log(self.contact , ' saved' , ret);},null);
                 self.render();
             });
         },
@@ -79,8 +81,10 @@ define(function(require){
             if (! this.contact) {
                 this.contact =  navigator.contacts.create(Utils.partnerToContact(this.cart.partner));
             }
+            var self = this;
+            if (!self.contact.ims){self.contact.ims = [];}
             this.contact.ims.push(new ContactField('vardion',this.cart.partner.id,true));
-            this.contact.save(function(){console.log(this.contact, ' saved');},null);
+            this.contact.save(function(ret){console.log(self.contact, ' saved',ret);},null);
         },
         open_contact:function(){
             
@@ -100,7 +104,7 @@ define(function(require){
             if (this.contact){
                 var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;                
                 console.log(vardion_id , this.cart.partner.id);
-                if (vardion_id != this.cart.partner.id) {
+                if (vardion_id.value != this.cart.partner.id) {
                     return '<span>Partner not synchronized yet<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';
                 }
             }else{                

@@ -73,7 +73,8 @@ define(['models/base','utils','rpc'],function(Base,Utils,Backbone){
             this.offset = this.length + res.records.length;
             return res.records;
         }, 
-        prepare_directory:function(dir){            
+        prepare_directory:function(dir){
+            console.log(dir);
             dir.getDirectory('product.product',{create:true},function(proddir){
                 proddir.getDirectory('image',{create:true},function(imagedir){
                 });

@@ -1,6 +1,5 @@
 define(function(require){
-    var Backbone = require('backbone');
-    var localstorage = require('localstorage');
+    var Backbone = require('backbone');    
     var Utils = require('utils');
     Backbone.emulateJSON = true;
     Backbone.emulateHTTP = true;
@@ -9,17 +8,16 @@ define(function(require){
     return {
         Model:      Backbone.Model.extend({                        
                         initialize:function(args,app){
-                            this.app = app;
+                            this.app = app;                            
                             pop.call(arguments);
                             Backbone.Model.prototype.initialize.apply(this,arguments);                    
                         },
                     }), 
         Collection: Backbone.Collection.extend({
                         initialize:function(data,app){                            
-                            this.app = app;
-                            pop.call(arguments);
-                            console.log(arguments);
-                            Backbone.Collection.prototype.initialize.apply(this,pop);                    
+                            this.app = app;                            
+                            pop.call(arguments);                            
+                            Backbone.Collection.prototype.initialize.apply(this,arguments);                    
                         },
                     }),
         Page:       Backbone.View.extend({
@@ -27,8 +25,7 @@ define(function(require){
                         withnav:true,
                         initialize:function(app){                          
                           this.app = app;                          
-                          Backbone.View.prototype.initialize.apply(this,arguments);                    
-                          
+                          Backbone.View.prototype.initialize.apply(this,arguments);                          
                           if (!this._name) return this;
                           try {
                               
@@ -46,8 +43,7 @@ define(function(require){
                               this.app.qweb.add_template(Utils.make_template(this._name,tpl));
                         },
                         render:function(){
-                            var nav = $('nav');            
-                            console.log(this);
+                            var nav = $('nav');                                        
                             try {
                                 this.$el.html(this.app.qweb.render(this._name,this));
                             }catch(ex){

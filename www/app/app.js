@@ -8,10 +8,11 @@ define(function(require) {
     var CartView = require('views/cart');    
     var QWeb2 = require('qweb');
     var Utils = require('utils');
-    console.log(CartView,CatalogView);
+    
     var DB_ID = 'app-catalog@';    
     var App = Backbone.Router.extend({
         qweb:   new QWeb2.Engine(),        
+        module: 'apps_catalog',
         routes: {
             '': 'default_action',
             '*actions': 'default_action',
@@ -25,13 +26,11 @@ define(function(require) {
           this.dbname   = params.dbname;
           this.DB_ID    = DB_ID + this.dbname;
           this.data_dir = cordova.file.dataDirectory + this.dbname +'/';
-          this.ensure_db();          
-          
-          Utils.app = this;
-          //this.prepare().done(this.start);
+          this.ready = this.ensure_db();          
+          Utils.app = this;          
         },
         prepare:function(){
-            var rets = [];
+            var rets = [];            
             this.catalog = new CatalogView(this);
             this.cart = new CartView(this);
             rets.push(this.catalog.prepare());
@@ -42,26 +41,25 @@ define(function(require) {
             return ;
         },
         open_cart:function(params){
-            console.log(params);
+            console.trace();
             var cart = new CartView(this);
             cart.start();
         },
         open_catalog:function(params){      
-            console.log(params);
+            console.trace();
             var catalog =  new CatalogView(this);
             catalog.ready.then(_.bind(catalog.start,catalog)).fail(function(err){
                 console.log(err);
             });
         },
-        open_login:function(params){
-            
+        open_login:function(params){            
             $('nav').hide();
             $('#login').show();            
-            $('#loginbutton').click(_.bind(this.do_login,this));
+            $('#loginbutton').one('click',_.bind(this.do_login,this));
         },        
         start:function(){
-            Backbone.history.start();
-            //Backbone.Router.prototype.start.apply(this,arguments);            
+            Backbone.history.start();            
+            this.ready.done(this.default_action());
         },
         ensure_db:function(context){            
             if (!context){
@@ -72,8 +70,9 @@ define(function(require) {
             }else{
                 this.default_action = _.bind(this.open_cart,this);
                 localStorage[this.DB_ID + '_context'] = JSON.stringify(context);
+                localStorage[this.DB_ID + '_session_id'] = context.session_id;
             }            
-            this.load_data(context).done(this.default_action);            
+            return this.load_data(context);            
         },
         do_login:function(){
           var self = this;          
@@ -81,9 +80,9 @@ define(function(require) {
           var params =  {db:this.dbname,
                         login:$('#username').val(),password:$('#password').val()};
           this.show_loading();
-          return rpc.query('call',params).then(function(res){
-              console.log(this.xhr);
-              self.ensure_db(res.result);
+          return rpc.call(params).then(function(res){
+              console.log(res);
+              self.ensure_db(res);
           });
         },
         show_loading:function(){
@@ -107,28 +106,38 @@ define(function(require) {
             }
             delete this.user.currencies;            
             $.extend(this.qweb.default_dict,
-                    this.user,
-                    this.context,
-                    {today:new Date()},
+                    {user:this.user, context:this.context, today:new Date()},
                     Utils,
                     );
-            
-            console.log(this.qweb);
             
             var rets = [ ];            
             var deffile = $.Deferred();
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {                   
                 fs.root.getDirectory(self.dbname,{create:true},function(appdir){                     
-                    self.dir = appdir;                
+                    self.dir = appdir;    
+                    appdir.getFile('templates.xml' ,{create:false},
+                                    _.bind(self.load_templates,self),
+                                    _.bind(self.fetch_templates,self));
                     deffile.resolve(self);
                 });
             });
             
-            rets.push(deffile);
-                
+            rets.push(deffile);                
             return $.when.apply($, rets).promise();
         },        
-        load_templates:function(){
+        load_templates:function(fileEntry){           
+            var self = this;            
+            var deffile = $.Deferred();            
+            fileEntry.file(function (file) {                
+                var reader = new FileReader();
+                reader.onloadend = function() {                    
+                    self.qweb.add_template(this.result);
+                    deffile.resolve(self);
+                };
+                reader.readAsText(file);
+
+            }, _.bind(this.fetch_templates,this));
+                
 //            var login_tmpl = require('text!templates/login.html');
 //            var catalog_tmpl = require('text!templates/catalog.html');
 //            var cart_tmpl = require('text!templates/cart.html');
@@ -137,6 +146,27 @@ define(function(require) {
 //            this.qweb.add_template(Utils.make_template('catalog',catalog_tmpl));
 //            this.qweb.add_template(Utils.make_template('cart',cart_tmpl));
         },
+        fetch_templates:function(fileEntry){
+            var self = this;
+            console.log(this,fileEntry);
+            $.get(this.url + '/web/webclient/qweb?mods='+ this.module).then(
+                function(resp){                                     
+                    self.dir.getFile('templates.xml',{create:true},function(fileEntry){
+                        fileEntry.createWriter(function(fileWriter){                           
+                            fileWriter.onwriteend = function() {
+                                console.log("Successful file write..." , fileEntry,resp);
+                                self.load_templates(fileEntry);
+                            };                            
+                            fileWriter.write(new Blob([new XMLSerializer().serializeToString(resp.documentElement)], { type:'text/xml'})); 
+                        });
+                    })
+                });
+            
+        },
+        get_rpc:function(model){
+            var url = model ? this.url + '/web/call_kw/' + model  : this.url +'/web/dataset/call';
+            return new Backbone.Rpc({'url': url,session_id:this.user.session_id });
+        }
     });    
     return App;    
 });

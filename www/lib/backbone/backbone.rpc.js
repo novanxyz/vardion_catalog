@@ -34,6 +34,9 @@
             if (options.url){
                 this.url = options.url;
             }            
+            if (options.session_id){
+                this.session_id = options.session_id;
+            }
             _.bindAll(this);
         },
         // store the old Backbone.Model constructor for later use
@@ -124,25 +127,30 @@
                 ret = null;
             this.responseID = id;
             // generate unique request id (timestamp)
-            // check if params and the function name are ok, then...
+            // check if params and the function name are ok, then...            
             if ((_.isObject(params) || _.isArray(params) ) && _.isString(fn)) {
                 // send query
-                ret = $.ajax({
-                    contentType : this.contentType + '; charset=' + this.charset,
+                var payload = { contentType : this.contentType + '; charset=' + this.charset,
                     type        : 'POST',
                     dataType    : 'json',
                     url         : this.url,
                     data        : JSON.stringify({
-                        jsonrpc : '2.0',
-                        method  : this.namespace + this.namespaceDelimiter + fn,
-                        id      : id,
-                        params  : params
-                    }),
+                                    jsonrpc : '2.0',
+                                    method  : this.namespace + this.namespaceDelimiter + fn,
+                                    id      : id,
+                                    params  : params
+                                  })
+                    };                
+                    
+                if (this.session_id){
+                    payload['headers'] = {'X-Openerp-Session-Id': this.session_id };
+                }
+                ret = $.ajax( _.extend( payload , {
                     statusCode  : {
                         404: _.bind(function () { this.handleExceptions(this.exceptions['404']); }, this),
                         500: _.bind(function () { this.handleExceptions(this.exceptions['500']); }, this)
                     },
-                    success: _.bind(function (data, status, response) {
+                    success: _.bind(function (data, status, response) {                        
                         if (data !== null && data.error !== undef) {
                             this.onError(callback, data, status, response);
                         } else {
@@ -157,7 +165,7 @@
                             this.onError(callback, jXhr, status, response);
                         }
                     }, this)
-                });
+                }));
             } else {
                 ret = this.handleExceptions(this.exceptions.typeMissmatch);
             }

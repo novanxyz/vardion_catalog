@@ -19,7 +19,8 @@ define(function(require){
           this.app = app;
           this.app.qweb.add_template(Utils.make_template(this._name,tmpl) );
           this.products = new Product.ProductCollection([],app);
-          this.products.prepare_directory(app.dir);
+          console.log(this.app);
+          this.products.prepare_directory(this.app.dir);
           this.products.bind('refresh',_.bind(this.render,this));          
           var self = this;
           this.ready = this.products.fetch({success: function(cols,resp,opts){
