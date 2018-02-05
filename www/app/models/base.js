@@ -7,8 +7,7 @@ define(function(require){
     var pop = [].pop;
 
     return {
-        Model:      Backbone.Model.extend({
-                        localStorage: new localstorage.LocalStorage(this._name),
+        Model:      Backbone.Model.extend({                        
                         initialize:function(args,app){
                             this.app = app;
                             pop.call(arguments);
@@ -16,7 +15,6 @@ define(function(require){
                         },
                     }), 
         Collection: Backbone.Collection.extend({
-                        localStorage: new localstorage.LocalStorage(this._name),
                         initialize:function(data,app){                            
                             this.app = app;
                             pop.call(arguments);

@@ -19,11 +19,11 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
        model : Orderline,       
    });
    return Base.Model.extend({
-        _name : 'sale.order',
-        localStorage: new localstorage.LocalStorage('cart'),
-        initialize:function(app,json){
+        _name : 'sale.order',        
+        initialize:function(json,app){
             Base.Model.prototype.initialize.apply(this,arguments);           
-            this.orderlines = new OrderlineCollection([],app);           
+            this.orderlines = new OrderlineCollection([],app);    
+            this.localStorage: new localstorage.LocalStorage(this.app.DB_ID + this._name),            
             this.set('order_date',new Date());
         },       
         add_product:function(product,options){

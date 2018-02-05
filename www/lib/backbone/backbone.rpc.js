@@ -184,7 +184,7 @@
           var ret = $.Deferred();  
           this.query('call',params,function(data,err){
               console.log(data,err);
-              ret.resolve(data.result);
+              ret.resolve(data);
           })
           return ret;
         },

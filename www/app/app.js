@@ -1,6 +1,6 @@
 define(function(require) {
     'use strict';
-
+    console.log(window,cordova,navigator);
 //    var _ = require('underscore');    
 //    var Backbone  = require('backbone');
     var Backbone  = require('rpc');
