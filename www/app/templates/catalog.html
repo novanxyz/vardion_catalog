@@ -14,7 +14,7 @@
                 <div  class="prod col-6"  t-foreach="products.models" t-as="p" t-att-data-categ_id="p.get('categ_id').id" t-att-data-id="p.id">
                     <div class="card mb-3">
                         <div class="img-container">
-                            <img class="card-img-top" t-att-src="p.get_image_url()" t-att-alt="p.get('display_name')"
+                            <img class="card-img-top" t-att-src="p.get_image_url(app)" t-att-alt="p.get('display_name')"
                                  onerror="this.src='img/placeholder.png';"/>
                         </div>
                         <div class="card-body">

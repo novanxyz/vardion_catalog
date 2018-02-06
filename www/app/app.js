@@ -17,6 +17,7 @@ define(function(require) {
             '': 'default_action',
             '*actions': 'default_action',
             'cart' : 'open_cart',
+            'cart/:order_id' : 'open_cart',
             'catalog' : 'open_catalog',
         },
         initialize:function(params){
@@ -24,10 +25,10 @@ define(function(require) {
           var url =  new URL(params.server_url);          
           this.url      = url.origin;
           this.dbname   = params.dbname;
-          this.DB_ID    = DB_ID + this.dbname;
-          this.data_dir = cordova.file.dataDirectory + this.dbname +'/';
+          this.DB_ID    = DB_ID + this.dbname;          
           this.ready = this.ensure_db();          
           Utils.app = this;          
+          
         },
         prepare:function(){
             var rets = [];            
@@ -42,13 +43,14 @@ define(function(require) {
         },
         open_cart:function(params){
             console.trace();
-            var cart = new CartView(this);
-            cart.start();
+            console.log(params);            
+            this.cart.ready.done(_.bind(this.cart.start,this.cart)).fail(function(err){
+                console.log(err);
+            });
         },
         open_catalog:function(params){      
-            console.trace();
-            var catalog =  new CatalogView(this);
-            catalog.ready.then(_.bind(catalog.start,catalog)).fail(function(err){
+            console.trace();            
+            this.catalog.ready.then(_.bind(this.catalog.start,this.catalog)).fail(function(err){
                 console.log(err);
             });
         },
@@ -59,7 +61,7 @@ define(function(require) {
         },        
         start:function(){
             Backbone.history.start();            
-            this.ready.done(this.default_action());
+            this.ready.done(_.bind(this.default_action,this));
         },
         ensure_db:function(context){            
             if (!context){
@@ -68,7 +70,7 @@ define(function(require) {
             if (_.isEmpty(context)){
                 this.default_action = _.bind(this.open_login,this);
             }else{
-                this.default_action = _.bind(this.open_cart,this);
+                this.default_action = _.bind(this.open_catalog,this);
                 localStorage[this.DB_ID + '_context'] = JSON.stringify(context);
                 localStorage[this.DB_ID + '_session_id'] = context.session_id;
             }            
@@ -77,11 +79,11 @@ define(function(require) {
         do_login:function(){
           var self = this;          
           var rpc = new Backbone.Rpc({url: this.url + '/web/session/authenticate'});
-          var params =  {db:this.dbname,
-                        login:$('#username').val(),password:$('#password').val()};
+          var params = { db:this.dbname,
+                         login:$('#username').val(),
+                         password:$('#password').val() };
           this.show_loading();
-          return rpc.call(params).then(function(res){
-              console.log(res);
+          return rpc.call(params).then(function(res){              
               self.ensure_db(res);
           });
         },
@@ -115,13 +117,14 @@ define(function(require) {
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {                   
                 fs.root.getDirectory(self.dbname,{create:true},function(appdir){                     
                     self.dir = appdir;    
+                    self.data_dir = appdir.nativeURL;
                     appdir.getFile('templates.xml' ,{create:false},
                                     _.bind(self.load_templates,self),
                                     _.bind(self.fetch_templates,self));
                     deffile.resolve(self);
                 });
             });
-            
+            rets.push(this.prepare());
             rets.push(deffile);                
             return $.when.apply($, rets).promise();
         },        
@@ -163,9 +166,9 @@ define(function(require) {
                 });
             
         },
-        get_rpc:function(model){
-            var url = model ? this.url + '/web/call_kw/' + model  : this.url +'/web/dataset/call';
-            return new Backbone.Rpc({'url': url,session_id:this.user.session_id });
+        get_rpc:function(url){
+            var server_url = url ? this.url+ url : this.url + '/web/dataset/call';
+            return new Backbone.Rpc({url: server_url ,session_id:this.user.session_id });
         }
     });    
     return App;    

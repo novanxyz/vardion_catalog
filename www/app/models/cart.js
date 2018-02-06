@@ -1,8 +1,12 @@
 define(['models/base','models/product','localstorage'],function(Base,Product,localstorage){
    var Orderline = Base.Model.extend({
-       initialize:function(data,app){
-           Base.Model.prototype.initialize.apply(this,arguments);           
-           this.product = new Product.Product(app);           
+       initialize:function(data,product){
+           console.log(data,product,arguments);
+           this.product = product;
+           this.app = product.app;
+           arguments[0] = data;
+           arguments[1] = this.app;
+           Base.Model.prototype.initialize.apply(this,arguments);
        },       
         get_price:function(){
             return this.get('unit_price') * this.get('qty');
@@ -34,7 +38,7 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
                 line = line[0];
                 line.set('qty', line.get('qty') + 1);
             }else{
-                this.orderlines.add({'product_id':product.id,qty:1,unit_price:product.get_price() });           
+                this.orderlines.add( new Orderline( _.extend(options,{'product_id':product.id,unit_price:product.get_price() }), product ));           
             }           
             this.trigger('added');
         },

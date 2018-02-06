@@ -31,9 +31,9 @@
             // check if we have a non std. content-type
             this.contentType = options !== undef && options.contentType !== undef ? options.contentType : this.contentType;
             // fix issue with the loss of this
-            if (options.url){
+            //if (options.url){
                 this.url = options.url;
-            }            
+            //}            
             if (options.session_id){
                 this.session_id = options.session_id;
             }
@@ -133,7 +133,7 @@
                 var payload = { contentType : this.contentType + '; charset=' + this.charset,
                     type        : 'POST',
                     dataType    : 'json',
-                    url         : this.url,
+                    url         : this.url || this.options.url,
                     data        : JSON.stringify({
                                     jsonrpc : '2.0',
                                     method  : this.namespace + this.namespaceDelimiter + fn,
@@ -144,8 +144,8 @@
                     
                 if (this.session_id){
                     payload['headers'] = {'X-Openerp-Session-Id': this.session_id };
-                }
-                ret = $.ajax( _.extend( payload , {
+                }                
+                ret = $.ajax(this.url, _.extend( payload , {
                     statusCode  : {
                         404: _.bind(function () { this.handleExceptions(this.exceptions['404']); }, this),
                         500: _.bind(function () { this.handleExceptions(this.exceptions['500']); }, this)

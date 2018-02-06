@@ -1,8 +1,13 @@
-define(['models/base','utils','rpc'],function(Base,Utils,Backbone){
+define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
     var Product = Base.Model.extend({     
         _name : 'product',
-        get_image_url:function(){          
-          return cordova.file.dataDirectory  +'files/pos/product.product/image/'+ this.id +'.png';          
+        initialize:function(args,app){
+          Base.Model.prototype.initialize.apply(this,arguments);          
+          this.app = app.collection.app;
+        },
+        get_image_url:function(app){          
+          app = app || this.app;          
+          return app.data_dir + 'product.product/image/'+ this.id +'.png';          
         },
         get_display_name:function(){
             return this.get('name');
@@ -22,7 +27,6 @@ define(['models/base','utils','rpc'],function(Base,Utils,Backbone){
             return json;
         },
         save_image:function(id,base64){
-            //console.log(this);
             return Utils.saveBase64( 'product.product/image',  id + '.png',base64,'image/png');
         },
     });
@@ -30,15 +34,16 @@ define(['models/base','utils','rpc'],function(Base,Utils,Backbone){
     var ProductCollection = Base.Collection.extend({
         _name : 'products',
         model:  Product,                
-        url:    'http://pos.vardion.com/web/dataset/search_read',
-        rpc:    new Backbone.Rpc({namespaceDelimiter:'',
-                    errorHandler: function (error) {console.log('Code: ' + error.code + ' Message: ' + error.message);}
-                }),        
         offset: 0,
+        initialize:function(args,app){
+          Base.Collection.prototype.initialize.apply(this,arguments);          
+          this.rpc = this.app.get_rpc('/web/dataset/search_read'),                  
+          this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);            
+        },
         search_param:function(){
             return {
-                model:  'product.product',                
-                context:{lang:'en_US','tz':'Asia/Jakarta','uid':1},
+                model:  'product.product', 
+                context: this.app.context,
                 domain: [['sale_ok','=',true],['available_in_pos','=',true]],
                 fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image'],
                 limit: 25,
@@ -58,27 +63,36 @@ define(['models/base','utils','rpc'],function(Base,Utils,Backbone){
             return categs;            
         },
         load:function(){
-            var products = JSON.parse(localStorage['DB']);            
-            //products = {records:products};
-            //products = _(products.records).map(function(p){return new Product(p);});            
-            this.add(products);
-            this.trigger('refresh');
+            var products = JSON.parse(localStorage[this.localStorage.name] || '{}');            
+            console.log(products);
+            if (products.length) {                         
+                this.add(products.records);
+                this.trigger('refresh');
+                return $.Deferred().resolve(products.records);
+            }            
+            return this.fetch().done(_.bind(this.save,this));            
         },
         save:function(){
-            var json = {records:this.toJSON()};
-            console.log(json,this.localStorage);
-            this.sync('update');
+            var json = {records:this.toJSON(),length:this.length};            
+            localStorage[this.localStorage.name] = JSON.stringify(json);            
         },
         parse:function(res){        
             this.offset = this.length + res.records.length;
             return res.records;
         }, 
-        prepare_directory:function(dir){
-            console.log(dir);
+        prepare_directory:function(dir){                        
+            dir = dir || this.app.dir;
+            console.log(this.app);
+            console.trace();
+            if (!dir && this.app.data_dir ) {return resolveLocalFileSystemURL(this.app.data_dir,_.bind(this.prepare_directory,this));}            
+            if (!dir) return;
             dir.getDirectory('product.product',{create:true},function(proddir){
                 proddir.getDirectory('image',{create:true},function(imagedir){
                 });
             });
+        },
+        clean:function(){
+            this.localStorage._clear();
         }
         
     });

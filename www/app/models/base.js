@@ -8,18 +8,48 @@ define(function(require){
     return {
         Model:      Backbone.Model.extend({                        
                         initialize:function(args,app){
-                            this.app = app;                            
-                            pop.call(arguments);
+                            this.app = app;            
+                            if (arguments.length> 1){
+                                pop.call(arguments);
+                            }
                             Backbone.Model.prototype.initialize.apply(this,arguments);                    
                         },
                     }), 
         Collection: Backbone.Collection.extend({
                         initialize:function(data,app){                            
                             this.app = app;                            
-                            pop.call(arguments);                            
+                            if (arguments.length> 1){
+                                pop.call(arguments);
+                            }
                             Backbone.Collection.prototype.initialize.apply(this,arguments);                    
                         },
                     }),
+        Widget:     Backbone.View.extend({
+                        initialize:function(app){                            
+                            this.app = app;                            
+                            if (arguments.length> 1){
+                                pop.call(arguments);
+                            }
+                            Backbone.View.prototype.initialize.apply(this,arguments);                    
+                        },
+                        start:function(){
+                            this.render();
+                            this.$el.show().removeClass('hide');
+                        },
+                        show_loading:function(){
+                            console.log('show loading');
+                        },
+                        hide_loading:function(){
+                            console.log('hide loading');
+                        },
+                        show:function(){                            
+                            this.$el.show();
+                        },
+                        hide:function(){
+                            this.$el.hide();
+                        }
+                    }),
+                    
         Page:       Backbone.View.extend({
                         el: document.getElementsByTagName('body')[0],
                         withnav:true,
@@ -40,7 +70,7 @@ define(function(require){
                         prepare:function(){
                             var tpl = require('text!templates/' + this._name +'.html');
                               //console.log(this,tpl);
-                              this.app.qweb.add_template(Utils.make_template(this._name,tpl));
+                            this.app.qweb.add_template(Utils.make_template(this._name,tpl));
                         },
                         render:function(){
                             var nav = $('nav');                                        
@@ -68,7 +98,15 @@ define(function(require){
                         hide_loading:function(){
                             console.log('hide loading');
                         },
-                    })
+                        show:function(){
+                            $('main').hide();
+                            this.$el.find('main').show();
+                        },
+                        hide:function(){
+                            this.$el.find('main').hide();
+                        }
+                    }),
+        
     
     }        
 });

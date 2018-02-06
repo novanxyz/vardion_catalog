@@ -30,6 +30,7 @@ define(function(require){
           this.cart.bind('request',_.bind(this.show_loading,this));
           this.cart.bind('sync',_.bind(this.hide_loading,this));
           this.orders = new Backbone.Collection([this.cart]);
+          this.ready = $.Deferred().resolve(this.card);
         },
         add_cart:function(){
             
