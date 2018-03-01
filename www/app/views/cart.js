@@ -32,6 +32,17 @@ define(function(require){
           this.orders = new Backbone.Collection([this.cart]);
           this.ready = $.Deferred().resolve(this.card);
         },
+        start:function(cart_id){
+            var self = this;
+            this.ready.done(function(){
+                var name = self.app.DB_ID + '_' + Cart.prototype._name;                         
+                self.cart_ids = localStorage[name] || [] ;
+                if (self.cart_ids.length){self.cart_ids = self.cart_ids.split(',');}                
+                self.cart.parse(cart_id);
+                self.render();
+                self.show();
+            });
+        },
         add_cart:function(){
             
         },
