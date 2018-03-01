@@ -11,15 +11,7 @@
 <!--        <script data-main="app/main" src="lib/require.js"></script>-->
     </head>
     <body>
-        <nav class="navbar navbar-light bg-primary fixed-top text-white hide">
-            <a href="#catalog"  class="navbar-brand text-white" data-target="#catalog" href="#">Catalog</a>
-            <a href="#cart"     class="pull-right cart cart-toggle"><i class="material-icons">shopping_cart</i>
-                <span class="cart-num">0</span>
-            </a>
-        </nav>        
-        <main id="main">            
-        </main>
-        <main id="login" class="login" style="display: none"> 
+        <main id="login" class="login page no-nav" style="display: none"> 
         <div class="px-lg-md login-page">
             <div class="container">
                 <div id="loginform" >
@@ -40,20 +32,27 @@
             </div>
         </div>
         </main>
+        <header class="fixed-top">
+        <nav class="navbar navbar-light bg-primary  text-white hide">
+            <a class="navbar-brand text-white" data-target="#catalog" href="#"><b>Vardion Catalog</b></a>
+            <button type="button" class="navbar navbar-toggle pull-right" data-toggle="collapse" data-target="#menu">
+                <i class="material-icons">more_vert</i>
+            </button>
+            <a href="#cart" class="pull-right cart cart-toggle text-white"><i class="material-icons">shopping_cart</i>
+                <span class="cart-num">0</span>
+            </a>
+        </nav>
+        <div class="collapse navbar-collapse bg-primary" id="menu" style="min-height: 56px">
+            <ul class="nav navbar-nav">
+              <li><a class="text-white" href="#">Help</a></li>
+              <li><a class="text-white" href="#">About</a></li> 
+            </ul>
+        </div>   
+        </header>        
+        
         <script src="cordova.js"></script>
-        <script data-main="js/main" src="lib/require/require.js"></script>
-        <!--<script src="app/main.js"></script>-->
-        
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<!--        <script src="js/jquery.min.js"></script>-->
-<!--        <script src="js/popper.min.js"></script>-->
-<!--        <script src="js/bootstrap.min.js"></script>-->
-        <!--<script src="lib/underscore/underscore.js"></script>-->
-<!--        <script src="lib/backbone/backbone.js"></script>-->
-<!--        <script src="lib/qweb/qweb2.js"></script>-->
-        <!--<script src="js/data/rpc.js"></script>
-        <script src="js/original.js"></script>-->
-        
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>        
+        <script data-main="js/main" src="lib/require/require.js"></script>        
     </body>
 </html>

@@ -1,5 +1,15 @@
 <main data-role="page" class="page catalogs tab-content mt-6  " id="catalog" >
-    <section class="container categs" id="categs">
+    <div class="container header">
+        <div class="search" >
+          <i class="material-icons">search</i>
+          <input id="search_input" class="text-input" placeholder="Search term">
+        </div>        
+        <div class="buttons pull-right" style="display: inline-block;">
+            <input type="radio" name="view_mode" id="view_mode1">
+            <label for="view_mode1" class="btn"><i class="material-icons">dashboard</i></label>            
+        </div>
+    </div>
+    <section class="container categs" id="categs" style="padding-top:15px">
         <div class="card-deck ">
             <div  class="card text-center mb-3 categ"  t-foreach="products.get_categories()" t-as="cat" t-att-data-categ_id="cat.id">
                 <div class="card-body">
@@ -14,7 +24,7 @@
                 <div  class="prod col-6"  t-foreach="products.models" t-as="p" t-att-data-categ_id="p.get('categ_id').id" t-att-data-id="p.id">
                     <div class="card mb-3">
                         <div class="img-container">
-                            <img class="card-img-top" t-att-src="p.get_image_url(app)" t-att-alt="p.get('display_name')"
+                            <img class="card-img-top" t-att-name="p.id" t-att-src="p.get_image_url(app)" t-att-alt="p.get('display_name')"
                                  onerror="this.src='img/placeholder.png';"/>
                         </div>
                         <div class="card-body">
