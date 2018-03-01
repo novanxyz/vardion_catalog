@@ -72,20 +72,12 @@ define(function(require){
                             var tpl = require('text!templates/' + this._name +'.html');                              
                             this.app.qweb.add_template(Utils.make_template(this._name,tpl));
                         },
-                        render:function(){
-                            var nav = $('nav');                                        
+                        render:function(){                            
                             try {
-                                this.$el.html(this.app.qweb.render(this._name,this));
+                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));
                             }catch(ex){
                                 console.log(ex);
-                            }
-                            
-                            this.$el.prepend(nav);
-                            if (this.withnav){
-                                this.$el.find('nav').show();
-                            }else{
-                                this.$el.find('nav').hide();                                
-                            }
+                            }                                                        
                             return this;
                         },
                         start:function(){
