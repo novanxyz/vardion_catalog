@@ -11,8 +11,8 @@ define(function(require) {
     
     var DB_ID = 'app-catalog@';    
     var App = Backbone.Router.extend({
+        _name:  'apps_catalog',
         qweb:   new QWeb2.Engine(),        
-        module: 'apps_catalog',
         routes: {
             '': 'default_action',
             '*actions': 'default_action',
@@ -20,12 +20,13 @@ define(function(require) {
             'cart/:order_id' : 'open_cart',
             'catalog' : 'open_catalog',
         },
-        initialize:function(params){
+        initialize:function(config){
           Backbone.Router.prototype.initialize.apply(this,arguments);          
-          var url =  new URL(params.server_url);          
+          var url       =  new URL(config.server_url);          
           this.url      = url.origin;
-          this.dbname   = params.dbname;
-          this.DB_ID    = DB_ID + this.dbname;          
+          this.dbname   = 'dbname' in config ? config.dbname : url.searchParams.get('db');
+          this.DB_ID    = this._name + '@' + this.dbname;          
+          this.modules   = config.modules || [] ;
           this.ready = this.ensure_db();          
           Utils.app = this;          
           
@@ -57,24 +58,7 @@ define(function(require) {
         open_login:function(params){            
             $('nav').hide();
             $('#login').show();            
-            $('#loginbutton').one('click',_.bind(this.do_login,this));
-        },        
-        start:function(){
-            Backbone.history.start();            
-            this.ready.done(_.bind(this.default_action,this));
-        },
-        ensure_db:function(context){            
-            if (!context){
-                context =  JSON.parse(localStorage[this.DB_ID + '_context'] || '{}' );                            
-            }            
-            if (_.isEmpty(context)){
-                this.default_action = _.bind(this.open_login,this);
-            }else{
-                this.default_action = _.bind(this.open_catalog,this);
-                localStorage[this.DB_ID + '_context'] = JSON.stringify(context);
-                localStorage[this.DB_ID + '_session_id'] = context.session_id;
-            }            
-            return this.load_data(context);            
+            $('#loginbutton').on('click',_.bind(this.do_login,this));
         },
         do_login:function(){
           var self = this;          
@@ -83,15 +67,35 @@ define(function(require) {
                          login:$('#username').val(),
                          password:$('#password').val() };
           this.show_loading();
+          localStorage.clear();
           return rpc.call(params).then(function(res){              
+              console.log(res);
               self.ensure_db(res);
           });
         },
+        start:function(){
+            Backbone.history.start();            
+            this.ready.done(_.bind(this.default_action,this));
+        },
+        ensure_db:function(context){            
+            if (!context){
+                context =  JSON.parse(localStorage[this.DB_ID + '_context'] || '{}' );                            
+            }            
+            if (_.isEmpty(context)|| context.error){
+                this.default_action = _.bind(this.open_login,this);
+                return $.Deferred().resolve();                
+            }else{
+                this.default_action = _.bind(this.open_catalog,this);
+                localStorage[this.DB_ID + '_context'] = JSON.stringify(context);
+                localStorage[this.DB_ID + '_session_id'] = context.session_id;
+                return this.load_data(context);            
+            }                        
+        },        
         show_loading:function(){
-            
+          $('#loading').show();
         },
         hide_loading:function(){
-            
+          $('#loading').hide();  
         },
         load_data:function(context){
           // load all data necessary for app;
@@ -109,24 +113,20 @@ define(function(require) {
             delete this.user.currencies;            
             $.extend(this.qweb.default_dict,
                     {user:this.user, context:this.context, today:new Date()},
-                    Utils,
-                    );
-            
-            var rets = [ ];            
+                    Utils 
+                    );                        
             var deffile = $.Deferred();
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {                   
                 fs.root.getDirectory(self.dbname,{create:true},function(appdir){                     
                     self.dir = appdir;    
                     self.data_dir = appdir.nativeURL;
-                    appdir.getFile('templates.xml' ,{create:false},
-                                    _.bind(self.load_templates,self),
-                                    _.bind(self.fetch_templates,self));
+//                    appdir.getFile('templates.xml' ,{create:false},
+//                                    _.bind(self.load_templates,self),
+//                                    _.bind(self.fetch_templates,self));
                     deffile.resolve(self);
                 });
-            });
-            rets.push(this.prepare());
-            rets.push(deffile);                
-            return $.when.apply($, rets).promise();
+            });                     
+            return $.when(deffile,this.prepare()).promise();
         },        
         load_templates:function(fileEntry){           
             var self = this;            
@@ -152,7 +152,8 @@ define(function(require) {
         fetch_templates:function(fileEntry){
             var self = this;
             console.log(this,fileEntry);
-            $.get(this.url + '/web/webclient/qweb?mods='+ this.module).then(
+            if (!this.modules.length) return;
+            $.get(this.url + '/web/webclient/qweb?mods='+ this.modules.join(',') ).then(
                 function(resp){                                     
                     self.dir.getFile('templates.xml',{create:true},function(fileEntry){
                         fileEntry.createWriter(function(fileWriter){                           
@@ -166,9 +167,16 @@ define(function(require) {
                 });
             
         },
-        get_rpc:function(url){
+        get_rpc:function(url){                    
             var server_url = url ? this.url+ url : this.url + '/web/dataset/call';
-            return new Backbone.Rpc({url: server_url ,session_id:this.user.session_id });
+            var rpc_opts = {url: server_url ,
+                            exceptionHandler:_.bind(this.handle_exception,this) };
+            if ( this.user ){ rpc_opts['session_id'] = this.user.session_id;}
+            return new Backbone.Rpc(rpc_opts);        
+        },
+        handle_exception:function(err){
+            alert(err.message);
+            $('#loading').hide();
         }
     });    
     return App;    

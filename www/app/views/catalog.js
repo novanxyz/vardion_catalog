@@ -36,10 +36,7 @@ define(function(require){
                 self.show();
             });
             
-        },
-        show:function(){
-            this.$el.show();
-        },
+        },        
         fetch:function(ev){
             this.products.sync();
         },

@@ -68,8 +68,8 @@ define(function(require){
                           return this;
                         },
                         prepare:function(){
-                            var tpl = require('text!templates/' + this._name +'.html');
-                              //console.log(this,tpl);
+                            return true;
+                            var tpl = require('text!templates/' + this._name +'.html');                              
                             this.app.qweb.add_template(Utils.make_template(this._name,tpl));
                         },
                         render:function(){
@@ -89,14 +89,20 @@ define(function(require){
                             return this;
                         },
                         start:function(){
-                            this.render();
-                            this.$el.find('main').show().removeClass('hide');
+                            var self = this;
+                            this.ready.done(function(){
+                                self.render();
+                                self.$el.find('main').show().removeClass('hide');
+                                self.hide_loading();
+                            })
+                            
                         },
-                        show_loading:function(){
-                            console.log('show loading');
+                        show_loading:function(){                            
+                            $('#loading').show();
                         },
                         hide_loading:function(){
-                            console.log('hide loading');
+                            
+                            $('#loading').hide();
                         },
                         show:function(){
                             $('main').hide();
