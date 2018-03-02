@@ -1,4 +1,4 @@
-<main data-role="page" class="page cart tab-content mt-5" id="carts" >
+<main data-role="page" class="page cart tab-content mt-5" id="cart" >
     <section>
         <ul class="nav nav-tabs bg-primary" id="orders" role="tablist">
             <li class="nav-item active " >
@@ -34,7 +34,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <h6 style="display:inline">Partner</h6>
-                                <a class="btn partner-select"><i class="material-icons">contacts</i></a>
+                                <a class="btn select_partner"><i class="material-icons">contacts</i></a>
                                 <h6 class="partner-val" >
                                     <t t-esc='cart.get_partner()'/>
                                 </h6>
@@ -50,7 +50,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="alert alert-warning" role="alert" style="margin-bottom: 0;min-height: 56px;"><t t-raw="get_notification()"/></div>
+                <div class="alert alert-warning" role="alert" style="margin-bottom: 0;min-height: 56px;">
+                    <t t-raw="get_notification()"/>
+                </div>
+                
                 <div class="container so-list">
                     <ul class="list-group list-group-flush">
                         <li t-foreach="cart.orderlines.models"  t-as="line" t-att-id="'line-' + line.cid " class="list-group-item ">
@@ -59,10 +62,17 @@
                             <span class="price"><t t-esc="format_currency(line.get_price())"/> </span>
                         </li>
                     </ul>
-                    <div class="row footer">
+                    <t t-if='! get_notification()'>
+                    <div class="container note">
+                    <textarea name="note" class="note" placeholder="Order Note... " style="width: 100%">                        
+                        <t t-esc="cart.get('note')"/>
+                    </textarea>
+                    </div>
+                    <div class="row footer" >
                         <a class="btn btn-danger text-white col-6 cancel">Cancel</a>
                         <a class="btn btn-secondary text-white col-6 confirm">Confirm</a>
                     </div>
+                    </t>
                 </div>
             </div>            
         </div>

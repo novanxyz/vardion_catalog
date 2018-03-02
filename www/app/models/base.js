@@ -84,10 +84,17 @@ define(function(require){
                             var self = this;
                             this.ready.done(function(){
                                 self.render();
-                                self.$el.find('main').show().removeClass('hide');
-                                self.hide_loading();
+                                self.show();
                             })
                             
+                        },
+                        show:function(){
+                            $('main').hide();
+                            this.$el.find('main').show();
+                            this.hide_loading();
+                        },
+                        hide:function(){
+                            this.$el.find('main').hide();
                         },
                         show_loading:function(){                            
                             $('#loading').show();
@@ -95,14 +102,7 @@ define(function(require){
                         hide_loading:function(){
                             
                             $('#loading').hide();
-                        },
-                        show:function(){
-                            $('main').hide();
-                            this.$el.find('main').show();
-                        },
-                        hide:function(){
-                            this.$el.find('main').hide();
-                        }
+                        },                        
                     }),
         
     

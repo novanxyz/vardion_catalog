@@ -1,5 +1,10 @@
 define(['models/base','models/product','localstorage'],function(Base,Product,localstorage){
    var Orderline = Base.Model.extend({
+       defaults: {
+           'qty': 1,
+           'discount':0,
+           'note': '',
+       },
        initialize:function(data,product){
            console.log(data,product,arguments);
            this.product = product;
@@ -12,10 +17,13 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
             return this.get('unit_price') * this.get('qty');
         },
         get_qty:function(){
-            return 1;
+            return this.get('qty');
         },
-        get_display_name:function(){
-            return this.product.get_name() + "\n" + this.get('name');
+        get_display_name:function(){            
+            return this.product.get_display_name() + this.get('note');
+        },
+        get_subtotal:function(){
+            return this.get('qty')  * this.get('unit_price') * ((100-this.get('discount'))/100);
         },
         
    });
@@ -45,6 +53,12 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
         get_count:function(){
             return this.orderlines.length;
         },
+        parse:function(obj){
+            if (!_.isObject(obj)){
+                obj = this.localStorage.find(obj);
+            }
+            console.log(this,obj);
+        },
         toJSON:function(){
           var orderlines = this.orderlines.toJSON();
           console.log(orderlines);
@@ -57,15 +71,14 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
             console.log('save',this.toJSON());
             Backbone.Model.prototype.save.apply(this,arguments);
         },
-        load:function(){
-           console.log(this);
-        },
-       get_name:function(){
+        get_name:function(){
             return 'SO#' + this.cid;
         },
         get_total_price:function(){
-            return 1000000;
-
+            return this.orderlines.reduce(function(p,c){
+                console.log(p,c);
+                return p + c.get_subtotal();
+            },0);
         },
         get_partner:function(){
             if (this.partner){
@@ -77,5 +90,13 @@ define(['models/base','models/product','localstorage'],function(Base,Product,loc
             return this.get('order_date').toDateString();
         }
        
+   }, {
+        load:function(cart_id){
+           console.log(this.toString(),cart_id);
+           if (isNaN(cart_id)){               
+               var cart = JSON.parse(localStorage[cart_id] || '{}');
+               return cart;
+           }
+        },
    }) 
 });

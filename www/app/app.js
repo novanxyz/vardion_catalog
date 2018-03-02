@@ -32,11 +32,12 @@ define(function(require) {
           
         },
         prepare:function(){
-            var rets = [];            
-            this.catalog = new CatalogView(this);
-            this.cart = new CartView(this);
-            rets.push(this.catalog.prepare());
-            rets.push(this.cart.prepare());
+            var rets = [];                        
+            this.cartView = new CartView(this);
+            this.cart = this.cartView.cart;
+            this.catalogView = new CatalogView(this);
+            rets.push(this.catalogView.prepare());
+            rets.push(this.cartView.prepare());
             return $.when.apply($, rets).promise();
         },
         default_action:function(params){
@@ -45,13 +46,13 @@ define(function(require) {
         open_cart:function(params){
             console.trace();
             console.log(params);            
-            this.cart.ready.done(_.bind(this.cart.start,this.cart)).fail(function(err){
+            this.cartView.ready.done(_.bind(this.cartView.start,this.cartView)).fail(function(err){
                 console.log(err);
             });
         },
         open_catalog:function(params){      
             console.trace();            
-            this.catalog.ready.then(_.bind(this.catalog.start,this.catalog)).fail(function(err){
+            this.catalogView.ready.then(_.bind(this.catalogView.start,this.catalogView)).fail(function(err){
                 console.log(err);
             });
         },
@@ -76,6 +77,16 @@ define(function(require) {
         start:function(){
             Backbone.history.start();            
             this.ready.done(_.bind(this.default_action,this));
+            window.onhashchange = _.bind(this.do_route,this);            
+        },
+        do_route:function(ev){            
+            var [hash,params]  = window.location.hash.split(/[\/&]/);                        
+            console.log(ev,this,hash,params);
+            hash = 'open_' + hash.substr(1);
+            console.log(hash,hash in this)
+            if (hash in this)
+                return _.result(this,hash);
+            this.default_action(params);
         },
         ensure_db:function(context){            
             if (!context){

@@ -8,25 +8,25 @@ define(function(require){
        _name : 'cart',
        events:{
            'click a.date-select'        : 'select_date',
-           'click a.partner-select'     : 'select_partner',
+           'click a.select_partner'     : 'select_partner',
            'click a.register_contact'   : 'register_contact',
            'click a.update_contact'     : 'update_contact',
            'click a.add_cart'           : 'add_cart',
            'click a.cancel_cart'        : 'cancel_cart',           
        },
-       initialize:function(app){
-          this.app = app;
-          Base.Page.prototype.initialize.apply(this,arguments);                    
-          //this.app.qweb.add_template(Utils.make_template('cart',tmpl) );
-          
-          var cart_id = localStorage[this.app.DB_ID + '_' + Cart.prototype._name];
-          var cart = {'user_id':app.user.uid};
-          console.log(this.app.DB_ID + Cart.prototype._name , cart_id);
+       initialize:function(app){          
+          Base.Page.prototype.initialize.apply(this,arguments);                              
+          var DB_ID = this.app.DB_ID +'_'+ Cart.prototype._name;
+          var cart_id = localStorage[DB_ID];
+          var cart = {'user_id':app.user.uid};          
           if (cart_id){
               cart_id = cart_id.split(',')[0];
-              cart = JSON.parse(localStorage[this.app.DB_ID + '_' + Cart.prototype._name + '-' + cart_id] || '{}');
+              cart_id = DB_ID + '-' + cart_id;
+              cart = Cart.load(cart_id);
           }            
-          this.cart =  new Cart(cart,app);                    
+          
+          this.cart =  new Cart(cart,app);
+          console.log(cart,this.cart);
           this.cart.bind('request',_.bind(this.show_loading,this));
           this.cart.bind('sync',_.bind(this.hide_loading,this));
           this.orders = new Backbone.Collection([this.cart]);
@@ -37,8 +37,17 @@ define(function(require){
             this.ready.done(function(){
                 var name = self.app.DB_ID + '_' + Cart.prototype._name;                         
                 self.cart_ids = localStorage[name] || [] ;
-                if (self.cart_ids.length){self.cart_ids = self.cart_ids.split(',');}                
-                self.cart.parse(cart_id);
+                if (self.cart_ids.length){
+                    self.cart_ids = self.cart_ids.split(',');
+                    if (!cart_id){
+                        cart_id = self.cart_ids[0];
+                    }
+                }                
+                console.log(self.cart.id, cart_id);
+                console.log(self.cart_ids,cart_id,self.cart);
+                console.log(self.cart.localStorage.find(cart_id));
+                //self.cart = self.cart.localStorage.find(cart_id);
+                //self.cart.parse(cart_id);
                 self.render();
                 self.show();
             });
@@ -75,7 +84,7 @@ define(function(require){
             });
         },
         register_contact:function(){
-            var rpc = this.app.get_rpc('res.partner');
+            var rpc = this.app.get_rpc('/res.partner');
             var self = this;
             return rpc.call('res.partner','find_or_create',[this.cart.partner]).then(function(res){                
                 console.log(res,self.contact);
@@ -104,25 +113,23 @@ define(function(require){
         get_notification:function(){
             $('.order .alert').show();            
             if (!this.cart.partner){
-                return '<span>No Partner selected<span><a class="pull-right partner-select"><i class="material-icons">contacts</i></a>';
+                return '<span>No Partner selected<span><a class="pull-right select_partner"><i class="material-icons">contacts</i></a>';
             }                        
             if (!this.cart.partner.email ) {
-                return '<span>Partner doesn\'t have email<span><a class="pull-right partner-select"><i class="material-icons">contacts</i></a>';
+                return '<span>Partner doesn\'t have email<span><a class="pull-right select_partner"><i class="material-icons">contacts</i></a>';
             }
             if (!this.cart.partner.id ) {
                 return '<span>Partner not registered<span><a class="pull-right register_contact"><i class="material-icons">cached</i></a>';
             }
             
             if (this.contact){
-                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;                
-                console.log(vardion_id , this.cart.partner.id);
+                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;
                 if (vardion_id.value != this.cart.partner.id) {
                     return '<span>Partner not synchronized yet<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';
                 }
             }else{                
                 return '<span>Partner not locally saved<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';                
-            }
-            
+            }            
         },
        
     });

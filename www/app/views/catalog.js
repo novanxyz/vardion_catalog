@@ -23,8 +23,8 @@ define(function(require){
           this.products.bind('refresh',_.bind(this.render,this));          
           var self = this;
           this.ready = this.products.load();           
-          this.cart = new Cart({},app);          
-          this.cart.bind('added',function(p){                            
+          this.cart = app.cart;
+          this.cart.bind('added',function(p){ console.log(p) ;
               var cnt =  self.cart.get_count();
               $('.cart .cart-num').html(cnt);
           });
@@ -49,7 +49,7 @@ define(function(require){
         },
         save_cart:function(){
             this.cart.save();            
-            this.app.open_cart(this.cart.id);
+            //this.app.open_cart(this.cart.id);
         },
         select_categ:function(ev){
             var categ = $(ev.currentTarget).closest('.card.categ');
