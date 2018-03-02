@@ -52,7 +52,7 @@
                 </div>
                 <div class="alert alert-warning" role="alert" style="margin-bottom: 0;min-height: 56px;"><t t-raw="get_notification()"/></div>                
                 <div class="container so-list">
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush" style="width: 100%">
                         <li t-foreach="cart.orderlines.models"  t-as="line" t-att-id="'line-' + line.cid " class="list-group-item ">
                             <span class="qty"><t t-esc="line.get_qty()"/></span>
                             <span class="item"><t t-esc="line.get_display_name()"/></span>
