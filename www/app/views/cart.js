@@ -42,10 +42,8 @@ define(function(require){
                     if (!cart_id){
                         cart_id = self.cart_ids[0];
                     }
-                }                
-                console.log(self.cart.id, cart_id);
-                console.log(self.cart_ids,cart_id,self.cart);
-                console.log(self.cart.localStorage.find(cart_id));
+                }                                
+                console.log(self.cart_ids,cart_id,self.cart);                
                 //self.cart = self.cart.localStorage.find(cart_id);
                 //self.cart.parse(cart_id);
                 self.render();
@@ -60,10 +58,14 @@ define(function(require){
         },
         select_date:function(){
             var options = {
-                date: new Date(this.cart.get('order_date')),
-                mode: 'date',
+                titleText : 'Order Date',
+                date      : new Date(this.cart.get('date_order')),
+                mode      : 'date',                
                 androidTheme : datePicker.ANDROID_THEMES.THEME_HOLO_DARK,
             };
+            options['minDate'] = options.date.setDate(1);
+            options['maxDate'] = options.date.setMonth(options.date.getMonth() + 1);
+            console.log(options);
             var self = this;            
             datePicker.show(options, function(date){
                 self.cart.set('order_date',new Date(date));
@@ -84,9 +86,9 @@ define(function(require){
             });
         },
         register_contact:function(){
-            var rpc = this.app.get_rpc('/res.partner/call_kw/find_or_create');
+            var rpc = this.app.get_rpc('/web/dataset/call_kw');
             var self = this;
-            return rpc.call('res.partner','find_or_create',[this.cart.partner]).then(function(res){                
+            return rpc.call('res.partner','find_or_create',[this.cart.partner], {}  ).then(function(res){                
                 console.log(res,self.contact);
                 self.cart.partner.id = res;
                 if (!self.contact.ims){
@@ -113,22 +115,22 @@ define(function(require){
         get_notification:function(){
             $('.order .alert').show();            
             if (!this.cart.partner){
-                return '<span>No Partner selected<span><a class="pull-right select_partner"><i class="material-icons">contacts</i></a>';
+                return '<span>No Partner selected</span><a class="pull-right btn" name="select_partner"><i class="material-icons">contacts</i></a>';
             }                        
             if (!this.cart.partner.email ) {
-                return '<span>Partner doesn\'t have email<span><a class="pull-right select_partner"><i class="material-icons">contacts</i></a>';
+                return '<span>Partner doesn\'t have email</span><a class="pull-right btn" name="select_partner"><i class="material-icons">contacts</i></a>';
             }
             if (!this.cart.partner.id ) {
-                return '<span>Partner not registered<span><a class="pull-right register_contact"><i class="material-icons">cached</i></a>';
+                return '<span>Partner not registered</span><a class="pull-right btn" name="register_contact"><i class="material-icons">cached</i></a>';
             }
             
             if (this.contact){
                 var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;
                 if (vardion_id.value != this.cart.partner.id) {
-                    return '<span>Partner not synchronized yet<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';
+                    return '<span>Partner not synchronized yet</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';
                 }
             }else{                
-                return '<span>Partner not locally saved<span><a class="pull-right update_contact"><i class="material-icons">account_box</i></a>';                
+                return '<span>Partner not locally saved</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';                
             }            
         },
        

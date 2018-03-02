@@ -65,9 +65,10 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 obj = this.localStorage.find(obj);
             }
             console.log(this,obj);
+            return obj;
         },
         fromJSON:function(json){            
-            json.date_order = new Date(json.date_order);
+            json.date_order =  new Date(json.date_order);
             if (json.order_line){
                 this.orderlines.reset(json.order_line);
                 delete json.order_line;
@@ -107,7 +108,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return 'No Partner selected';
         },
         get_order_date:function(){
-            return this.get('date_order').toDateString();
+            return this.get('date_order') instanceof Date ? this.get('date_order').toDateString() : this.get('date_order').substr(0,10);
         }
        
    }, {

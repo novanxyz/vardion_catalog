@@ -93,7 +93,7 @@ var Utils = {
                 street  : address.streetAddress,
                 city    : address.locality,
                 zip     : address.postalCode,
-                country : address.country.toUpperCase == 'INDONESIA' ? 'ID':'US',
+                country : address.country && address.country.toUpperCase == 'INDONESIA' ? 'ID':'US',
             });
         }
 

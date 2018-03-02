@@ -40,21 +40,12 @@ define(function(require) {
         default_action:function(params){
             return ;
         },
-        open_cart:function(params){
-            console.trace();
-            console.log(params);            
+        open_cart:function(params){            
             this.cartView.start();
-//            this.cartView.ready.done(_.bind(this.cartView.start,this.cartView)).fail(function(err){
-//                console.log(err);
-//            });
         },
-        open_catalog:function(params){      
-            console.trace();            
+        open_catalog:function(params){                  
             this.catalogView.set_order(this.cartView.cart);
             this.catalogView.start();
-//            this.catalogView.ready.then(_.bind(this.catalogView.start,this.catalogView)).fail(function(err){
-//                console.log(err);
-//            });
         },
         open_login:function(params){            
             $('nav').hide();

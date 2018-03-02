@@ -172,7 +172,7 @@
 
             return ret;
         },
-        call:function(model,method,params){
+        call:function(model,method,params,kwargs){
           if (!method && !params) {
               params = model;
           } 
@@ -188,6 +188,9 @@
           if (_.isString(model) && _.isString(method)){
               params.model = model;
               params.method = method;
+          }
+          if (arguments.length > 3){
+              params.kwargs = arguments[3];
           }
           var ret = $.Deferred();  
           this.query('call',params,function(data,err){
