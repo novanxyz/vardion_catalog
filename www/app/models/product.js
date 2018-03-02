@@ -39,6 +39,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
           Base.Collection.prototype.initialize.apply(this,arguments);          
           this.rpc = this.app.get_rpc('/web/dataset/search_read'),                  
           this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);            
+          this.on('fetch',_.bind(this.save,this));
         },
         search_param:function(){
             return {
@@ -46,8 +47,8 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
                 context: this.app.context,
                 domain: [['sale_ok','=',true],['available_in_pos','=',true]],
                 fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image'],
-                limit: 25,
-                offset: this.offset,
+                limit: 50,
+                offset: this.length,
             }
         },
         methods: {
@@ -72,11 +73,12 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             return this.fetch().done(_.bind(this.save,this));            
         },
         save:function(){
+            console.trace();
             var json = {records:this.toJSON(),length:this.length};            
             localStorage[this.localStorage.name] = JSON.stringify(json);            
         },
         parse:function(res){        
-            this.offset = this.length + res.records.length;
+            this.offset += res.records.length;
             return res.records;
         }, 
         prepare_directory:function(dir){                        

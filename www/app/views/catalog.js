@@ -11,7 +11,8 @@ define(function(require){
            'click .card.categ'  : 'select_categ',           
            'click nav a.navbar-brand': 'all_categ',
            'click a.cart'       : 'save_cart',
-           'click a.btn.add'    : 'add_product',           
+           'click a.btn.add'    : 'add_product',  
+           'change .search input' : 'search'
        },
        initialize:function(app){
           Base.Page.prototype.initialize.apply(this,arguments);          
@@ -42,7 +43,7 @@ define(function(require){
           });
         },
         fetch:function(ev){
-            this.products.sync();
+            this.products.fetch();
         },
         add_product:function(ev){
             var card = $(ev.currentTarget).closest('div.prod');                        
@@ -66,6 +67,12 @@ define(function(require){
         },
         get_product:function(product_id){
             return this.products.find(product_id);
+        },
+        load_more:function(ev){
+            this.products.fetch();
+        },
+        search:function(ev){
+            console.log(this,ev,$(ev.currentTarget));
         },
         
    });
