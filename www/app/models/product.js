@@ -23,7 +23,8 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
                 this.save_image(json.id,json.image);
             }            
             delete json.image;
-            json.categ_id = json.categ_id ? {id: json.categ_id[0],name:json.categ_id[1].split('/').pop().trim() } : false;
+            console.log(json.categ_id);
+            json.categ_id = _.isArray(json.categ_id) ? { id: json.categ_id[0],name:json.categ_id[1].split('/').pop().trim() } : json.categ_id;
             return json;
         },
         save_image:function(id,base64){
@@ -47,7 +48,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
                 context: this.app.context,
                 domain: [['sale_ok','=',true],['available_in_pos','=',true]],
                 fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image'],
-                limit: 50,
+                limit: 10,
                 offset: this.length,
             }
         },
@@ -77,9 +78,10 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             var json = {records:this.toJSON(),length:this.length};            
             localStorage[this.localStorage.name] = JSON.stringify(json);            
         },
-        parse:function(res){        
+        parse:function(res){            
+            this.total = res.length;
             this.offset += res.records.length;
-            return res.records;
+            return this.toJSON().concat(res.records) ;
         }, 
         prepare_directory:function(dir){                        
             dir = dir || this.app.dir;

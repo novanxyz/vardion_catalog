@@ -69,7 +69,13 @@ define(function(require){
             return this.products.find(product_id);
         },
         load_more:function(ev){
-            this.products.fetch();
+            var self = this;
+            return this.products.fetch().done(
+                    function(res){
+                        var products = res.result;
+                        self.products.save();
+                        self.render();
+                    });            
         },
         search:function(ev){
             console.log(this,ev,$(ev.currentTarget));
