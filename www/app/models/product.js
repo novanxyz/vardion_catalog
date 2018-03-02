@@ -63,8 +63,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             return categs;            
         },
         load:function(){
-            var products = JSON.parse(localStorage[this.localStorage.name] || '{}');            
-            console.log(products);
+            var products = JSON.parse(localStorage[this.localStorage.name] || '[]');                        
             if (products.length) {                         
                 this.add(products.records);
                 this.trigger('refresh');

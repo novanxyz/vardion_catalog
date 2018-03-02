@@ -37,10 +37,10 @@ define(function(require){
                             this.$el.show().removeClass('hide');
                         },
                         show_loading:function(){
-                            console.log('show loading');
+                            $('#loading').show();
                         },
                         hide_loading:function(){
-                            console.log('hide loading');
+                            $('#loading').hide();
                         },
                         show:function(){                            
                             this.$el.show();
@@ -65,8 +65,11 @@ define(function(require){
                           }catch(x){
                               console.log(x);
                           }
+                          this.$el.on('click','.btn[name]',_.bind(this.button_handler,this));
+                          this.ready = $.when();
                           return this;
                         },
+                        
                         prepare:function(){
                             return true;
                             var tpl = require('text!templates/' + this._name +'.html');                              
@@ -99,10 +102,12 @@ define(function(require){
                         show_loading:function(){                            
                             $('#loading').show();
                         },
-                        hide_loading:function(){
-                            
+                        hide_loading:function(){                            
                             $('#loading').hide();
                         },                        
+                        button_handler:function(ev){
+                            console.log(this,ev, ($(ev.eventTarget).attr('name')));
+                        }
                     }),
         
     

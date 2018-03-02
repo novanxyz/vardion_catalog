@@ -84,7 +84,7 @@ define(function(require){
             });
         },
         register_contact:function(){
-            var rpc = this.app.get_rpc('/res.partner');
+            var rpc = this.app.get_rpc('/res.partner/call_kw/find_or_create');
             var self = this;
             return rpc.call('res.partner','find_or_create',[this.cart.partner]).then(function(res){                
                 console.log(res,self.contact);

@@ -1,24 +1,23 @@
 define(function(require) {
     'use strict';
-    console.log(window,cordova,navigator);
-//    var _ = require('underscore');    
-//    var Backbone  = require('backbone');
     var Backbone  = require('rpc');
+    var Product = require('models/product');
     var CatalogView = require('views/catalog');
     var CartView = require('views/cart');    
+    var AboutView = require('views/about');
+    var HelpView = require('views/help');    
     var QWeb2 = require('qweb');
     var Utils = require('utils');
-    
-    var DB_ID = 'app-catalog@';    
+        
     var App = Backbone.Router.extend({
         _name:  'apps_catalog',
         qweb:   new QWeb2.Engine(),        
         routes: {
-            '': 'default_action',
-            '*actions': 'default_action',
-            'cart' : 'open_cart',
+            ''          : 'default_action',
+            '*actions'  : 'default_action',
+            'cart'      : 'open_cart',
             'cart/:order_id' : 'open_cart',
-            'catalog' : 'open_catalog',
+            'catalog'   : 'open_catalog',
         },
         initialize:function(config){
           Backbone.Router.prototype.initialize.apply(this,arguments);          
@@ -26,15 +25,13 @@ define(function(require) {
           this.url      = url.origin;
           this.dbname   = 'dbname' in config ? config.dbname : url.searchParams.get('db');
           this.DB_ID    = this._name + '@' + this.dbname;          
-          this.modules   = config.modules || [] ;
-          this.ready = this.ensure_db();          
-          Utils.app = this;          
-          
+          this.modules  = config.modules || [] ;
+          this.ready    = this.ensure_db();          
+          Utils.app     = this;
         },
         prepare:function(){
             var rets = [];                        
-            this.cartView = new CartView(this);
-            this.cart = this.cartView.cart;
+            this.cartView = new CartView(this);            
             this.catalogView = new CatalogView(this);
             rets.push(this.catalogView.prepare());
             rets.push(this.cartView.prepare());
@@ -46,15 +43,18 @@ define(function(require) {
         open_cart:function(params){
             console.trace();
             console.log(params);            
-            this.cartView.ready.done(_.bind(this.cartView.start,this.cartView)).fail(function(err){
-                console.log(err);
-            });
+            this.cartView.start();
+//            this.cartView.ready.done(_.bind(this.cartView.start,this.cartView)).fail(function(err){
+//                console.log(err);
+//            });
         },
         open_catalog:function(params){      
             console.trace();            
-            this.catalogView.ready.then(_.bind(this.catalogView.start,this.catalogView)).fail(function(err){
-                console.log(err);
-            });
+            this.catalogView.set_order(this.cartView.cart);
+            this.catalogView.start();
+//            this.catalogView.ready.then(_.bind(this.catalogView.start,this.catalogView)).fail(function(err){
+//                console.log(err);
+//            });
         },
         open_login:function(params){            
             $('nav').hide();
@@ -74,6 +74,14 @@ define(function(require) {
               self.ensure_db(res);
           });
         },
+        open_about:function(){
+            var about = new AboutView(this);
+            about.start();
+        },
+        open_help:function(){
+            var help = new HelpView(this);
+            help.start();
+        },
         start:function(){
             Backbone.history.start();            
             this.ready.done(_.bind(this.default_action,this));
@@ -83,7 +91,7 @@ define(function(require) {
             var [hash,params]  = window.location.hash.split(/[\/&]/);                        
             console.log(ev,this,hash,params);
             hash = 'open_' + hash.substr(1);
-            console.log(hash,hash in this)
+            console.log(hash,hash in this);
             if (hash in this)
                 return _.result(this,hash);
             this.default_action(params);
@@ -188,7 +196,13 @@ define(function(require) {
         handle_exception:function(err){
             alert(err.message);
             $('#loading').hide();
-        }
+        },
+        get_product:function(product_id){
+            var products = JSON.parse(localStorage[this.DB_ID + '_products' ] || '[]');                                  
+            products = new Product.ProductCollection(products.records,this);            
+            return products.get(product_id);
+        },
+        
     });    
     return App;    
 });

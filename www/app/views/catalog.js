@@ -15,28 +15,32 @@ define(function(require){
        },
        initialize:function(app){
           Base.Page.prototype.initialize.apply(this,arguments);          
-          this.app = app;
-          this.app.qweb.add_template(Utils.make_template(this._name,tmpl) );
-          this.products = new Product.ProductCollection([],app);
-
+          this.app = app;          
+          this.products = new Product.ProductCollection([],app);          
           this.products.prepare_directory(this.app.dir);
           this.products.bind('refresh',_.bind(this.render,this));          
           var self = this;
           this.ready = this.products.load();           
-          this.cart = app.cart;
-          this.cart.bind('added',function(p){ console.log(p) ;
-              var cnt =  self.cart.get_count();
-              $('.cart .cart-num').html(cnt);
-          });
+          if (app.cart)this.set_order(app.cart);
         },        
         start:function(){
             var self  = this;
-            this.ready.then(function(){
+            this.ready.then(function(products){                
+                self.app.get_product = function(product_id){
+                    products = new Product.ProductCollection(products,this.app);            
+                    return products.get(product_id);                    
+                };
                 self.render();
                 self.show();
-            });
-            
+            });            
         },        
+        set_order:function(cart){            
+            this.cart = cart;         
+            $('.cart .cart-num').html(cart.get_count());
+            this.cart.bind('added',function(p){              
+              $('.cart .cart-num').html(cart.get_count());
+          });
+        },
         fetch:function(ev){
             this.products.sync();
         },
@@ -59,6 +63,9 @@ define(function(require){
         },
         all_categ:function(){
             this.$el.find('.card.prod').show();
+        },
+        get_product:function(product_id){
+            return this.products.find(product_id);
         },
         
    });
