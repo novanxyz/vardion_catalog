@@ -105,9 +105,11 @@ define(function(require){
                         hide_loading:function(){                            
                             $('#loading').hide();
                         },                        
-                        button_handler:function(ev){
-                            console.log(this,ev, ($(ev.currentTarget).attr('name')));
-                            return _.result(this,($(ev.currentTarget).attr('name')));
+                        button_handler:function(ev){                            
+                            var name = ($(ev.currentTarget).attr('name'));
+                            console.log(this[name]);
+                            return _.result(this,name);
+                            //return _.result(this,namearguments);                            
                         }
                     }),
         

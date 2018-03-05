@@ -9,18 +9,16 @@ define(function(require){
        _name : 'catalog',
        events : {
            'click .card.categ'  : 'select_categ',           
-           'click nav a.navbar-brand': 'all_categ',
-           'click a.cart'       : 'save_cart',
-           'click a.btn.add'    : 'add_product',  
-           'change .search input' : 'search'
+           'click nav a.navbar-brand': 'all_categ',           
+           'change .search input' : 'search',
+           'swipe main'         : 'handle_swipe', 
        },
        initialize:function(app){
           Base.Page.prototype.initialize.apply(this,arguments);          
           this.app = app;          
           this.products = new Product.ProductCollection([],app);          
           this.products.prepare_directory(this.app.dir);
-          this.products.bind('refresh',_.bind(this.render,this));          
-          var self = this;
+          this.products.bind('refresh',_.bind(this.render,this));                    
           this.ready = this.products.load();           
           if (app.cart)this.set_order(app.cart);
         },        
@@ -45,8 +43,8 @@ define(function(require){
         fetch:function(ev){
             this.products.fetch();
         },
-        add_product:function(ev){
-            var card = $(ev.currentTarget).closest('div.prod');                        
+        add_product:function(ev){            
+            var card = $(event.target).closest('div.prod');                        
             var prod_id = card.data('id');            
             var product = this.products.get(prod_id);            
             var options = {qty:1};
@@ -57,7 +55,7 @@ define(function(require){
             //this.app.open_cart(this.cart.id);
         },
         select_categ:function(ev){
-            var categ = $(ev.currentTarget).closest('.card.categ');
+            var categ = $(ev.target).closest('.card.categ');
             var categ_id = categ.data('categ_id');            
             this.$el.find('.prod').hide();            
             this.$el.find('.prod[data-categ_id='+categ_id+']').show();
@@ -71,14 +69,21 @@ define(function(require){
         load_more:function(ev){
             var self = this;
             return this.products.fetch().done(
-                    function(res){
-                        var products = res.result;
+                    function(res){                        
                         self.products.save();
                         self.render();
                     });            
         },
         search:function(ev){
             console.log(this,ev,$(ev.currentTarget));
+        },
+        handle_swipe:function(ev){            
+            var curTarget= $(ev.currentTarget);
+            ev = ev.originalEvent;            
+            if (ev.detail.dir == 'up' && curTarget.parent().scrollTop() > curTarget.height() ){                
+                $('#loading').show()
+                this.load_more().done(function(){$('#loading').hide()});
+            }
         },
         
    });

@@ -18,6 +18,9 @@
     },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-custom-config": {
+      "PACKAGE_NAME": "com.vardion.catalog"
     }
   },
   "dependent_plugins": {}

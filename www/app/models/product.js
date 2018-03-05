@@ -73,8 +73,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             }            
             return this.fetch().done(_.bind(this.save,this));            
         },
-        save:function(){
-            console.trace();
+        save:function(){            
             var json = {records:this.toJSON(),length:this.length};            
             localStorage[this.localStorage.name] = JSON.stringify(json);            
         },
@@ -84,9 +83,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             return this.toJSON().concat(res.records) ;
         }, 
         prepare_directory:function(dir){                        
-            dir = dir || this.app.dir;
-            console.log(this.app);
-            console.trace();
+            dir = dir || this.app.dir;            
             if (!dir && this.app.data_dir ) {return resolveLocalFileSystemURL(this.app.data_dir,_.bind(this.prepare_directory,this));}            
             if (!dir) return;
             dir.getDirectory('product.product',{create:true},function(proddir){
