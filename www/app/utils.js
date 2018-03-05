@@ -14,8 +14,7 @@ var Utils = {
     makeTemplate:function (file){
         file = 'text!'+file;
         var tmpl = require(file);
-        var name = 'catalog';
-        console.log(tmpl,file);
+        var name = 'catalog';        
         tmpl = '<templates><t t-name="'+name+'">' + tmpl + '</t></templates>';
         tmpl = tmpl.replace(/(<input.+?\/?>)/g,function(m){return m.replace(">","/>");} );       
         return tmpl;
@@ -72,6 +71,7 @@ var Utils = {
 
     },
     contactToPartner:function(contact){
+        console.log(contact);        
         var phone   = _(contact.phoneNumbers).find(function(ph){return ph.type === 'work' || ph.pref;});
         phone = phone ? phone: contact.phoneNumbers[0];                            
         var partner = {
@@ -98,7 +98,7 @@ var Utils = {
         }
 
         var vardion_id = (contact.ims) ? _(contact.ims).find(function(im){return im.type =='vardion'}) : false;
-        if (vardion_id){partner.id = vardion_id.value;}
+        if (vardion_id){partner.id = parseInt(vardion_id.value) ;}
         return partner;
 
     },
@@ -125,6 +125,22 @@ var Utils = {
       console.log(products);
       return _(products).where({'id':product_id});  
     },
+    get_defaults:function(model){
+        var dict= {
+            'sale.order.line' : {'qty': 1,'discount':0,'note': '',},
+            'sale.order'      : {   'note': '',
+                                    'company_id':1,
+                                    'picking_policy': 'direct',
+                                    'payment_term_id': 3,
+                                    'origin'       : 'apps_catalog',
+                                    'pricelist_id' : 1,
+                                    'date_order': new Date(),
+                                    'user_id':  1,
+                                }
+            };
+        return _.result(dict,model);
+    }
 }
+
 return Utils;
 })

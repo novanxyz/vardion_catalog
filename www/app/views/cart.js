@@ -7,12 +7,7 @@ define(function(require){
     var CartView = Base.Page.extend({
        _name : 'cart',
        events:{
-           'click a.date-select'        : 'select_date',
-           'click a.select_partner'     : 'select_partner',
-           'click a.register_contact'   : 'register_contact',
-           'click a.update_contact'     : 'update_contact',
-           'click a.add_cart'           : 'add_cart',
-           'click a.cancel_cart'        : 'cancel_cart',           
+           'swipe main': 'check_status',
        },
        initialize:function(app){          
           Base.Page.prototype.initialize.apply(this,arguments);                              
@@ -46,7 +41,11 @@ define(function(require){
                 console.log(self.cart_ids,cart_id,self.cart);                
                 //self.cart = self.cart.localStorage.find(cart_id);
                 //self.cart.parse(cart_id);
-                self.render();
+                if (self.cart.get('partner_id')){
+                    self.select_partner(self.cart.get('partner_id'));
+                }else{
+                    self.render();
+                }                
                 self.show();
             });
         },
@@ -59,13 +58,13 @@ define(function(require){
         select_date:function(){
             var options = {
                 titleText : 'Order Date',
-                date      : new Date(this.cart.get('date_order')),
+                date      : this.cart.get('date_order') ,
                 mode      : 'date',                
                 androidTheme : datePicker.ANDROID_THEMES.THEME_HOLO_DARK,
             };
             options['minDate'] = options.date.setDate(1);
             options['maxDate'] = options.date.setMonth(options.date.getMonth() + 1);
-            console.log(options);
+            console.log(this.cart,options);
             var self = this;            
             datePicker.show(options, function(date){
                 self.cart.set('order_date',new Date(date));
@@ -73,31 +72,53 @@ define(function(require){
             }, null);
 
         },
-        select_partner:function(){
+        select_partner:function(partner_id){
             var self = this;
             console.log(this,navigator.contacts);
-            navigator.contacts.pickContact(function(contact){                
+            function onContact(contact){
+                contact = _.isArray(contact) ? contact[0]:contact;
                 self.cart.partner = Utils.contactToPartner(contact);
                 console.log(contact,self.cart.partner);
                 self.contact = contact;
                 self.render();
-            },function(err){
-                console.log('Error: ' + err);
-            });
+            }
+            
+            if (partner_id){
+                var clause = new ContactFindOptions();
+                clause.multiple =false;
+                clause.filter = partner_id;
+                clause.contactFields = 'ims' ;
+                clause.hasPhoneNumber=true;
+                var fields       = [navigator.contacts.fieldType.ims];
+                navigator.contacts.find(fields,onContact,null,clause);
+            }else {
+                navigator.contacts.pickContact(onContact);
+            }            
         },
         register_contact:function(){
-            var rpc = this.app.get_rpc('/web/dataset/call_kw');
+            var rpc = this.app.get_rpc('/web/dataset/call_kw/res.partner');
             var self = this;
             return rpc.call('res.partner','find_or_create',[this.cart.partner], {}  ).then(function(res){                
                 console.log(res,self.contact);
                 self.cart.partner.id = res;
+                self.cart.save();
+                
                 if (!self.contact.ims){
                     self.contact.ims = [];
                 }
                 
-                self.contact.ims.push(new ContactField('vardion',self.cart.partner.id,true));
-                self.contact.save(function(ret){console.log(self.contact , ' saved' , ret);},null);
-                self.render();
+                try {
+                    self.contact.ims.push(new ContactField('vardion',self.cart.partner.id,true));
+                    console.log(self.contact);
+                    self.contact.save(function(ret){
+                                            self.render();
+                                            console.log(self.contact , ' saved' , ret);
+                                      },function(ret){
+                                            console.log(self.contact , ' error' , ret);
+                                    });
+                }catch (ex){
+                    console.log("ERROR REGISTER CONTACT",ex);
+                }                                
             });
         },
         update_contact:function(){
@@ -133,6 +154,42 @@ define(function(require){
                 return '<span>Partner not locally saved</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';                
             }            
         },
+        cancel_order:function(){
+            
+        },
+        confirm_order:function(){
+            var rpc = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);
+            var self = this;
+            if (isNaN(this.cart.id)){                
+                return rpc.call('create',[this.cart.toJSON(1)],{context:this.app.context})
+                        .then(function(res){
+                    console.log(res);
+                    self.cart.id = res;
+                    self.cart.save();
+                });
+            }else{
+                return rpc.call('write',[this.cart.id,this.cart.toJSON(1)])
+                        .then(function(res){
+                    console.log(res);
+                    self.cart.save();
+                });
+            }            
+        },
+        check_status:function(ev){
+            var curTarget= $(ev.currentTarget);
+            ev = ev.originalEvent;            
+            if (ev.detail.dir == 'up' && curTarget.parent().scrollTop() > curTarget.height() ){                
+                console.log('check_status');
+            }
+            if (ev.detail.dir == 'left' } {
+            
+            } 
+            if (ev.detail.dir == 'right' } {            
+            } 
+            
+            
+        },
+        
        
     });
     return CartView;

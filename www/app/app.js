@@ -136,6 +136,7 @@ define(function(require) {
                     deffile.resolve(self);
                 });
             });                     
+            Utils.app = this;
             return $.when(deffile,this.prepare()).promise();
         },        
         load_templates:function(fileEntry){           

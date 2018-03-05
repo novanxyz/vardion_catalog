@@ -29,6 +29,10 @@
         <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
         <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
         <splash density="port-xhdpi" src="res/screen/android/splash-port-xhdpi.png" />
+        <custom-preference name="android-manifest/application/activity/@android:theme" value="@android:style/Theme.Material" />
+        <custom-preference name="android-minSdkVersion" value="21" />
+        <custom-preference name="android-maxSdkVersion" value="27" />
+        <custom-preference name="android-targetSdkVersion" value="26" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />

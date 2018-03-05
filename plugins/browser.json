@@ -18,6 +18,9 @@
     },
     "cordova-plugin-contacts": {
       "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-custom-config": {
+      "PACKAGE_NAME": "io.cordova.hellocordova"
     }
   },
   "dependent_plugins": {}

@@ -75,7 +75,7 @@ function initSwipe(){
     
     document.addEventListener('touchstart',function(ev){
         //ev.preventDefault();
-        console.log('START:',ev);                
+        //console.log('START:',ev);                
         startTouch = ev.touches[0];        
         startTime = ev.timeStamp;
         startElement = startTouch.target;
@@ -103,7 +103,7 @@ function initSwipe(){
                                         'startTouch':startTouch
                                 }});
         }
-        console.log("END:",ev,event);
+        //console.log("END:",ev,event);
         document.dispatchEvent(event,{'bubbles':true});
         startElement.dispatchEvent(event);
     },false);        

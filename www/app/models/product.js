@@ -47,7 +47,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
                 model:  'product.product', 
                 context: this.app.context,
                 domain: [['sale_ok','=',true],['available_in_pos','=',true]],
-                fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image'],
+                fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image','uom_id','taxes_id'],
                 limit: 10,
                 offset: this.length,
             }

@@ -175,7 +175,7 @@
         call:function(model,method,params,kwargs){
           if (!method && !params) {
               params = model;
-          } 
+          }
           if (!params){
               params = method;
               method = model;

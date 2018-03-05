@@ -106,8 +106,7 @@ define(function(require){
                             $('#loading').hide();
                         },                        
                         button_handler:function(ev){                            
-                            var name = ($(ev.currentTarget).attr('name'));
-                            console.log(this[name]);
+                            var name = ($(ev.currentTarget).attr('name'));                            
                             return _.result(this,name);
                             //return _.result(this,namearguments);                            
                         }
