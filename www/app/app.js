@@ -60,8 +60,7 @@ define(function(require) {
                          password:$('#password').val() };
           this.show_loading();
           localStorage.clear();
-          return rpc.call(params).then(function(res){              
-              console.log(res);
+          return rpc.call(params,null).then(function(res){                            
               self.ensure_db(res);
           });
         },
@@ -79,10 +78,9 @@ define(function(require) {
             window.onhashchange = _.bind(this.do_route,this);            
         },
         do_route:function(ev){            
-            var [hash,params]  = window.location.hash.split(/[\/&]/);                        
-            console.log(ev,this,hash,params);
+            var [hash,params]  = window.location.hash.split(/[\/&]/);                                    
             hash = 'open_' + hash.substr(1);
-            console.log(hash,hash in this);
+            
             if (hash in this)
                 return _.result(this,hash);
             this.default_action(params);

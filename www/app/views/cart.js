@@ -11,17 +11,7 @@ define(function(require){
        },
        initialize:function(app){          
           Base.Page.prototype.initialize.apply(this,arguments);                              
-          var DB_ID = this.app.DB_ID +'_'+ Cart.prototype._name;
-          var cart_id = localStorage[DB_ID];
-          var cart = {'user_id':app.user.uid};          
-          if (cart_id){
-              cart_id = cart_id.split(',')[0];
-              cart_id = DB_ID + '-' + cart_id;
-              cart = Cart.load(cart_id);
-          }            
-          
-          this.cart =  new Cart(cart,app);
-          console.log(cart,this.cart);
+          this.cart =  new Cart({},app);          
           this.cart.bind('request',_.bind(this.show_loading,this));
           this.cart.bind('sync',_.bind(this.hide_loading,this));
           this.orders = new Backbone.Collection([this.cart]);
@@ -29,18 +19,7 @@ define(function(require){
         },
         start:function(cart_id){
             var self = this;
-            this.ready.done(function(){
-                var name = self.app.DB_ID + '_' + Cart.prototype._name;                         
-                self.cart_ids = localStorage[name] || [] ;
-                if (self.cart_ids.length){
-                    self.cart_ids = self.cart_ids.split(',');
-                    if (!cart_id){
-                        cart_id = self.cart_ids[0];
-                    }
-                }                                
-                console.log(self.cart_ids,cart_id,self.cart);                
-                //self.cart = self.cart.localStorage.find(cart_id);
-                //self.cart.parse(cart_id);
+            this.ready.done(function(){                                
                 if (self.cart.get('partner_id')){
                     self.select_partner(self.cart.get('partner_id'));
                 }else{
@@ -49,8 +28,23 @@ define(function(require){
                 self.show();
             });
         },
+        render:function(){            
+            var name = this.app.DB_ID + '_' + Cart.prototype._name;       
+            console.log(name);
+            this.cart_ids = localStorage[name] || '' ;
+            if (this.cart_ids.length){
+                this.cart_ids = this.cart_ids.split(',');                
+                console.log(this.cart_ids.indexOf(this.cart.get('client_order_ref')),this.cart.get('client_order_ref'));
+            }                                
+            Base.Page.prototype.render.apply(this,arguments);
+        },
         add_cart:function(){
-            
+            if (!this.cart.get_count()) {
+                return alert("Cannot create new order.\nPlease add product first.");
+            }
+            this.cart = new Cart({'user_id':this.app.user.uid,'date_order':new Date()},this.app);
+            this.cart.save();
+            this.render()
         },
         cancel_cart:function(){
             
@@ -155,7 +149,9 @@ define(function(require){
             }            
         },
         cancel_order:function(){
-            
+            this.cart.destroy();
+            this.cart = new Cart({},this.app);
+            this.render()
         },
         confirm_order:function(){
             var rpc = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);
@@ -164,6 +160,7 @@ define(function(require){
                 return rpc.call('create',[this.cart.toJSON(1)],{context:this.app.context})
                         .then(function(res){
                     console.log(res);
+                    self.cart.set('id',res);
                     self.cart.id = res;
                     self.cart.save();
                 });
@@ -178,13 +175,19 @@ define(function(require){
         check_status:function(ev){
             var curTarget= $(ev.currentTarget);
             ev = ev.originalEvent;            
-            if (ev.detail.dir == 'up' && curTarget.parent().scrollTop() > curTarget.height() ){                
+            if (ev.detail.dir == 'down' && curTarget.parent().scrollTop() == 0 ){                
                 console.log('check_status');
             }
-            if (ev.detail.dir == 'left' } {
             
+            if (ev.detail.dir == 'up'){
+                $('#cart-buttons').show();
+                $('#cart-buttons').blur(function(){$(this).hide()});
             } 
-            if (ev.detail.dir == 'right' } {            
+            if (ev.detail.dir == 'right')  {            
+                console.log($('a.nav-link[aria-selected="true"]').attr('name') );
+            } 
+            if (ev.detail.dir == 'left')  {
+                console.log($('a.nav-link[aria-selected="true"]').attr('name') );
             } 
             
             

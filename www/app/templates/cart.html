@@ -2,19 +2,20 @@
     <section>
         <ul class="nav nav-tabs bg-primary" id="orders" role="tablist">
             <li class="nav-item active " >
+                <t t-log="cart"/>
                 <a class="nav-link text-white active" data-toggle="tab"  role="tab"  
-                   t-att-id="'tab-'+ cart.cid" t-att-href="'#so' + cart.id" 
+                   t-att-id="'tab-'+ cart.id"
                    t-att-aria-controls="'so' + cart.cid" >
                     <t t-esc="cart.get_name()"/>
                 </a>
             </li>
-            <li t-foreach="cart_ids" t-as="c" class="nav-item select_cart" t-if="c != cart.id">
-                <a class="nav-link text-white " data-toggle="tab"  role="tab"  
+            <li t-foreach="cart_ids" t-as="c" class="nav-item select_cart" t-if="c != cart.get('client_order_ref')" >
+                <a class="nav-link text-white " data-toggle="tab"  role="tab"  t-att-name='c'
                    t-att-id="'tab-'+ c" t-att-href="'#so'+c" t-att-aria-controls="'so' + c" >
                     <t t-esc="c.substr(-4)"/>
                 </a>
             </li>
-            <li class="nav-item active" t-if="cart_ids.length lt 5">
+            <li class="nav-item" t-if="cart_ids.length lt 5">
                 <a class="nav-link text-white btn" name="add_cart" data-toggle="add"  role="add"  >
                     <i class="material-icons">add</i>
                 </a>
@@ -73,5 +74,10 @@
                 </div>
             </div>            
         </div>
+    </section>
+    <section id="cart-buttons">
+        <a class="btn"><i class="material-icons"></i></a>
+        <a class="btn"><i class="material-icons"></i></a>
+        <a class="btn"><i class="material-icons"></i></a>
     </section>
 </main>

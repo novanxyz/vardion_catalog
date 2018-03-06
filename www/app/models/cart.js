@@ -1,13 +1,11 @@
 define(['models/base','models/product','localstorage','utils'],function(Base,Product,localstorage,Utils){
    var Orderline = Base.Model.extend({
        defaults: Utils.get_defaults('sale.order.line'),
-       initialize:function(data,product){
-           console.log(data,product,arguments);           
+       initialize:function(data,product){           
            if (product instanceof Product.Product ){               
                 this.product = product;
                 this.app = product.app;
-           }else{
-               console.log('from collections',product.collection,Utils);
+           }else{               
                this.app = product.collection.app;
                this.product = this.app.get_product(data['product_id']);
            }
@@ -17,7 +15,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
            Base.Model.prototype.initialize.apply(this,arguments);
         },               
         get_price:function(){
-            return this.get('unit_price') * this.get('qty');
+            return this.get('price_unit') * this.get('qty');
         },
         get_qty:function(){
             return this.get('qty') + '' + this.product.get('uom_id')[1];
@@ -26,7 +24,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return this.product.get_display_name() + this.get('note');
         },
         get_subtotal:function(){
-            return this.get('qty')  * this.get('unit_price') * ((100-this.get('discount'))/100);
+            return this.get('qty')  * this.get('price_unit') * ((100-this.get('discount'))/100);
         },
         toJSON:function(to_server){
             return _.extend(Backbone.Model.prototype.toJSON.apply(this,arguments), {
@@ -43,16 +41,23 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
    });
    return Base.Model.extend({
         _name : 'sale.order',        
-        _model: 'sale.order',
-        defaults : Utils.get_defaults(this._model),
+        _model: 'sale.order',        
         initialize:function(json,app){
             Base.Model.prototype.initialize.apply(this,arguments); 
             this.partner = null;
             this.orderlines = new OrderlineCollection([],app);    
-            this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);            
-            if ( !_.isEmpty(json) ){                            
-                this.fromJSON(json);
-            }            
+            this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);                        
+            if ( !json || _.isEmpty(json) ){                                                                        
+                var ids = localStorage[this.localStorage.name];                        
+                if (ids){
+                    json = JSON.parse(localStorage[this.localStorage.name + '-' + ids.split(',')[0] ]);
+                }else {
+                    json = {'user_id':this.app.user.id};
+                }                                
+            }                                    
+            json = _.extend(Utils.get_defaults(this._model),json);
+            this.fromJSON(json);
+            this.save();
         },       
         add_product:function(product,options){            
             var line = this.orderlines.where({product_id:product.id});            
@@ -60,7 +65,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 line = line[0];
                 line.set('qty', line.get('qty') + (options['qty'] || 1));
             }else{
-                this.orderlines.add( new Orderline( _.extend(options,{'product_id':product.id,unit_price:product.get_price() }), product ));           
+                this.orderlines.add( new Orderline( _.extend(options,{'product_id':product.id,price_unit:product.get_price() }), product ));           
             }           
             this.trigger('added');
         },
@@ -75,12 +80,12 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return obj;
         },
         fromJSON:function(json){            
-            json.date_order =  json.date_order ? new Date(json.date_order) : new Date();
+            console.log(json);
+            json.date_order =  json.date_order ? new Date(json.date_order) : new Date();            
             if (json.order_line){
                 this.orderlines.reset(json.order_line);
                 delete json.order_line;
-            }
-            
+            }            
             if (json.partner_id && _.isArray(json.partner_id)){
                 this.partner = _.object(['id','name'],json.partner_id);
                 json.partner_id = json.partner_id[0];
@@ -96,12 +101,16 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                    } ) ;
             console.log(orderlines);
             if (to_server){
-                order['order_line'] = _(orderlines).map(function(line){
-                 console.log(line);
-                 var cmd = line.id ? 1 : 0 ;
-                 cmd = cmd & line.qty ? 1 : 2;
-                 return [cmd,line.id,line];
+                order['order_line'] = [];
+                _(orderlines).each(function(line){
+                    console.log(line);                 
+                    var cmd = line.id ? 1 : 0 ;                 
+                    cmd = line.id && line.qty ? 1 : 2;
+                    cmd = line.id ? cmd : 0;
+                    if ( cmd || line.qty )
+                        return order['order_line'].push([cmd,line.id,line]);
                });
+               order['order_line'] = order['order_line'].filter(Boolean);
             }
             if (!order.client_order_ref) order.client_order_ref = this.id;
             if (isNaN(order.id)) delete order.id;
@@ -113,7 +122,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             Backbone.Model.prototype.save.apply(this,arguments);
         },
         get_name:function(){
-            return 'SO#' + this.cid;
+            return 'SO#' + this.get('client_order_ref').substr(-4);
         },
         get_total_price:function(){
             return this.orderlines.reduce(function(p,c){

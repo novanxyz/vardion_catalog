@@ -56,6 +56,7 @@ function onDeviceReady() {
     var config = {'dbname': 'pos','server_url':'http://pos.vardion.com?db=pos'}   
     var catalog = new App(config);
     catalog.start();    
+    window['app'] = catalog;
 }
 
 function initSwipe(){

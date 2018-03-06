@@ -172,16 +172,24 @@
 
             return ret;
         },
-        call:function(model,method,params,kwargs){
+        call:function(model,method,params,kwargs){                      
           if (!method && !params) {
               params = model;
           }
-          if (!params){
-              params = method;
-              method = model;
-          }
+          var path = this.url.split(/\//);
+          console.log(path);
+          if ( _.isString(model) ){
+               if (_.isString(method) ){
+                   model = model;
+                   method = method;
+               }else {
+                    params = method;
+                    method = model;
+                    model = path[6];
+               }              
+          }                    
           if (_.isArray(params)){
-              var par = {}
+              var par = {};
               par.args = params;
               params = par;
           }
@@ -189,9 +197,10 @@
               params.model = model;
               params.method = method;
           }
-          if (arguments.length > 3){
-              params.kwargs = arguments[3];
+          if (_.isObject(arguments[arguments.length-1]) ){
+              params.kwargs = arguments[arguments.length-1];
           }
+          console.log(params,arguments);
           var ret = $.Deferred();  
           this.query('call',params,function(data,err){
               console.log(data,err);
