@@ -7,20 +7,20 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-file": {
-      "PACKAGE_NAME": "com.vardion.catalog"
-    },
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.vardion.catalog"
-    },
-    "cordova-plugin-datepicker": {
+    "cordova-custom-config": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
     "cordova-plugin-contacts": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-    "cordova-custom-config": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
+    "cordova-plugin-datepicker": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.vardion.catalog"
     }
   },
   "dependent_plugins": {}
