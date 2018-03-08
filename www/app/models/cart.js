@@ -47,6 +47,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             this.partner = null;
             this.orderlines = new OrderlineCollection([],app);    
             this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);                        
+            
             if ( !json || _.isEmpty(json) ){                                                                        
                 var ids = localStorage[this.localStorage.name];                        
                 if (ids){
@@ -55,6 +56,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                     json = {'user_id':this.app.user.id};
                 }                                
             }                                    
+            console.log(json,_.isEmpty(json),localStorage[this.localStorage.name]);
             json = _.extend(Utils.get_defaults(this._model),json);
             this.fromJSON(json);
             this.save();
@@ -76,11 +78,10 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             if (!_.isObject(obj)){
                 obj = this.localStorage.find(obj);
             }
-            console.log(this,obj);
+            //console.log(this,obj);
             return obj;
         },
         fromJSON:function(json){            
-            console.log(json);
             json.date_order =  json.date_order ? new Date(json.date_order) : new Date();            
             if (json.order_line){
                 this.orderlines.reset(json.order_line);
@@ -91,7 +92,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 json.partner_id = json.partner_id[0];
             }
             this.set(json);
-            console.log(this,json);
+            //console.log(this,json);
         },
         toJSON:function(to_server){
             var orderlines = this.orderlines.toJSON();                    
@@ -99,11 +100,10 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                     { 'partner_id' : this.partner ? this.partner.id : 1,
                       'order_line' : orderlines,                      
                    } ) ;
-            console.log(orderlines);
+            //console.log(orderlines);
             if (to_server){
                 order['order_line'] = [];
                 _(orderlines).each(function(line){
-                    console.log(line);                 
                     var cmd = line.id ? 1 : 0 ;                 
                     cmd = line.id && line.qty ? 1 : 2;
                     cmd = line.id ? cmd : 0;
@@ -112,13 +112,12 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                });
                order['order_line'] = order['order_line'].filter(Boolean);
             }
-            if (!order.client_order_ref) order.client_order_ref = this.id;
-            if (isNaN(order.id)) delete order.id;
-            console.log(order);
+            if (!order.client_order_ref) order.client_order_ref = this.id;            
+            //if (isNaN(order.id)) delete order.id;            
             return order;
         },
         save:function(){
-            console.log('save',this.toJSON());
+            console.log('save',this,this.toJSON());
             Backbone.Model.prototype.save.apply(this,arguments);
         },
         get_name:function(){

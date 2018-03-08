@@ -7,7 +7,7 @@ define(function(require){
     var CartView = Base.Page.extend({
        _name : 'cart',
        events:{
-           'swipe main': 'check_status',
+           'swipe main#cart': 'check_status',
        },
        initialize:function(app){          
           Base.Page.prototype.initialize.apply(this,arguments);                              
@@ -92,7 +92,7 @@ define(function(require){
         register_contact:function(){
             var rpc = this.app.get_rpc('/web/dataset/call_kw/res.partner');
             var self = this;
-            return rpc.call('res.partner','find_or_create',[this.cart.partner], {}  ).then(function(res){                
+            return rpc.call('find_or_create',[this.cart.partner], {}  ).then(function(res){                
                 console.log(res,self.contact);
                 self.cart.partner.id = res;
                 self.cart.save();
