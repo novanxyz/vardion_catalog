@@ -39,10 +39,7 @@ define(function(require){
             this.cart.bind('added',function(p){              
               $('.cart .cart-num').html(cart.get_count());
           });
-        },
-        fetch:function(ev){
-            this.products.fetch();
-        },
+        },        
         add_product:function(ev){            
             var card = $(event.target).closest('div.prod');                        
             var prod_id = card.data('id');            

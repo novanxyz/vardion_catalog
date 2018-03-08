@@ -29,12 +29,10 @@ define(function(require){
             });
         },
         render:function(){            
-            var name = this.app.DB_ID + '_' + Cart.prototype._name;       
-            console.log(name);
+            var name = this.app.DB_ID + '_' + Cart.prototype._name;                   
             this.cart_ids = localStorage[name] || '' ;
             if (this.cart_ids.length){
                 this.cart_ids = this.cart_ids.split(',');                
-                console.log(this.cart_ids.indexOf(this.cart.get('client_order_ref')),this.cart.get('client_order_ref'));
             }                                
             Base.Page.prototype.render.apply(this,arguments);
         },
@@ -72,7 +70,7 @@ define(function(require){
             function onContact(contact){
                 contact = _.isArray(contact) ? contact[0]:contact;
                 self.cart.partner = Utils.contactToPartner(contact);
-                console.log(contact,self.cart.partner);
+                //console.log(contact,self.cart.partner);
                 self.contact = contact;
                 self.render();
             }
