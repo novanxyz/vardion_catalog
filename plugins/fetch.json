@@ -7,22 +7,6 @@
     "is_top_level": true,
     "variables": {}
   },
-  "cordova-plugin-whitelist": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-whitelist@1.3.3"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "cordova-plugin-datepicker": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-datepicker@^0.9.3"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
   "cordova-plugin-contacts": {
     "source": {
       "type": "registry",
@@ -34,7 +18,15 @@
   "cordova-custom-config": {
     "source": {
       "type": "registry",
-      "id": "cordova-custom-config"
+      "id": "cordova-custom-config@^5.0.2"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
+  "cordova-plugin-whitelist": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-whitelist@1.3.3"
     },
     "is_top_level": true,
     "variables": {}

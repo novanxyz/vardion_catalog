@@ -88,12 +88,11 @@ define(function(require){
                             this.ready.done(function(){
                                 self.render();
                                 self.show();
-                            })
-                            
+                            });
                         },
                         show:function(){
                             $('main').hide();
-                            $('#menu').collapse("hide");
+                            $('#menu').removeClass('show');
                             this.$el.find('main').show();
                             this.hide_loading();
                         },

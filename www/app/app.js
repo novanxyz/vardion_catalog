@@ -61,7 +61,7 @@ define(function(require) {
           this.show_loading();
           localStorage.clear();
           return rpc.call(params,null).then(function(res){                            
-              self.ensure_db(res);
+              self.ensure_db(res).done(_.result(self,'default_action'));
           });
         },
         open_about:function(){

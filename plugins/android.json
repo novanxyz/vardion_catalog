@@ -10,16 +10,13 @@
     "cordova-plugin-contacts": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-    "cordova-plugin-datepicker": {
-      "PACKAGE_NAME": "com.vardion.catalog"
-    },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-    "cordova-plugin-whitelist": {
+    "cordova-custom-config": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-    "cordova-custom-config": {
+    "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.vardion.catalog"
     }
   },
