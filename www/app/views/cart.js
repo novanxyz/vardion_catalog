@@ -173,22 +173,22 @@ define(function(require){
             }            
         },
         check_status:function(ev){
-            var curTarget= $(ev.currentTarget);
-            ev = ev.originalEvent;            
-            if (ev.detail.dir == 'down' && curTarget.parent().scrollTop() == 0 ){                
-                console.log('check_status');
-            }
-            
-            if (ev.detail.dir == 'up'){
-                $('#cart-buttons').show();
-                $('#cart-buttons').blur(function(){$(this).hide()});
-            } 
-            if (ev.detail.dir == 'right')  {            
-                console.log($('a.nav-link[aria-selected="true"]').attr('name') );
-            } 
-            if (ev.detail.dir == 'left')  {
-                console.log($('a.nav-link[aria-selected="true"]').attr('name') );
-            } 
+           var curTarget= $(ev.currentTarget);
+           ev = ev.originalEvent;            
+           if (ev.detail.dir == 'down' && curTarget.parent().scrollTop() == 0 ){                
+               console.log('check_status');
+           }
+           
+           if (ev.detail.dir == 'up'){
+               $('#cart-buttons').show();
+               $('#cart-buttons').blur(function(){$(this).hide()});
+           }
+           if (ev.detail.dir == 'right')  {            
+               console.log($('a.nav-link[aria-selected="true"]').attr('name') );
+           }
+           if (ev.detail.dir == 'left')  {
+               console.log($('a.nav-link[aria-selected="true"]').attr('name') );
+           }
             
             
         },

@@ -98,7 +98,7 @@ nav + nav{display: block !Important;}
 header {position: fixed;top:0;width: 100vw}
 header #menu li {min-height: 56px;padding: 16px; }
 #loading {
-    background: #b71c1c !important;
+    background: #ffc107 !important;
     text-align: center;
 }
 .loader{    
@@ -113,7 +113,7 @@ header #menu li {min-height: 56px;padding: 16px; }
   transform: translate(-50%,-50%);
 }
 
-.search { position: relative; display:inline-block;width: calc(100vw - 90px) }
+.search { position: relative; display:inline-block;width: calc(100% - 90px) }
 .search input { 
     text-indent: 30px; 
     width: 100%;
