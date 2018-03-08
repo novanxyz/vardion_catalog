@@ -93,6 +93,7 @@ define(function(require){
                         },
                         show:function(){
                             $('main').hide();
+                            $('#menu').collapse("hide");
                             this.$el.find('main').show();
                             this.hide_loading();
                         },
