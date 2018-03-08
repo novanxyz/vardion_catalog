@@ -1,14 +1,13 @@
 define(['models/base','models/product','localstorage','utils'],function(Base,Product,localstorage,Utils){
    var Orderline = Base.Model.extend({
        defaults: Utils.get_defaults('sale.order.line'),
-       initialize:function(data,product){           
-           if (product instanceof Product.Product ){               
-                this.product = product;
-                this.app = product.app;
-           }else{               
-               this.app = product.collection.app;
-               this.product = this.app.get_product(data['product_id']);
-           }
+       initialize:function(data,options){   
+           console.log(options,arguments);
+           console.trace();
+           
+           this.product = options.product;
+           this.order   = options.order;
+           this.app     = options.order.app;
            
            arguments[0] = data;
            arguments[1] = this.app;
@@ -18,7 +17,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return this.get('price_unit') * this.get('qty');
         },
         get_qty:function(){
-            return this.get('qty') + '' + this.product.get('uom_id')[1];
+            return this.get('qty');// + '' + this.product.get('uom_id')[1];
         },
         get_display_name:function(){            
             return this.product.get_display_name() + this.get('note');
@@ -67,7 +66,9 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 line = line[0];
                 line.set('qty', line.get('qty') + (options['qty'] || 1));
             }else{
-                this.orderlines.add( new Orderline( _.extend(options,{'product_id':product.id,price_unit:product.get_price() }), product ));           
+                this.orderlines.add( new Orderline( 
+                        _.extend(options,{'product_id':product.id,price_unit:product.get_price() }), 
+                        product ));           
             }           
             this.trigger('added');
         },
@@ -84,8 +85,14 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
         fromJSON:function(json){            
             json.date_order =  json.date_order ? new Date(json.date_order) : new Date();            
             if (json.order_line){
-                this.orderlines.reset(json.order_line);
+                var order_lines=[];
+                for (var l in json.order_line) {
+                    var line = json.order_line[l];
+                    var product = this.app.get_product(line['product_id']);
+                    order_lines.push(new Orderline(line,{'order':this,'product':product}));
+                }
                 delete json.order_line;
+                this.orderlines.reset(order_lines);                                
             }            
             if (json.partner_id && _.isArray(json.partner_id)){
                 this.partner = _.object(['id','name'],json.partner_id);
@@ -136,7 +143,11 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
         },
         get_order_date:function(){
             return this.get('date_order') instanceof Date ? this.get('date_order').toDateString() : this.get('date_order').substr(0,10);
-        }
+        },
+        confirm:function(){
+            var rpc = this.app.get_rpc('/web/dataset/call_kw/' + this._model );            
+            return rpc.call('action_confirm', [this.id],{});            
+        },
        
    }, {
         load:function(cart_id){   
