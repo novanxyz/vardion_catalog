@@ -1,7 +1,14 @@
 define(['models/base','models/product','localstorage','utils'],function(Base,Product,localstorage,Utils){
    var Orderline = Base.Model.extend({
        defaults: Utils.get_defaults('sale.order.line'),
+<<<<<<< HEAD
        initialize:function(data,options){
+=======
+       initialize:function(data,options){   
+           console.log(options,arguments);
+           console.trace();
+           
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
            this.product = options.product;
            this.order   = options.order;
            this.app     = options.order.app;
@@ -104,7 +111,11 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                     { 'partner_id' : this.partner ? this.partner.id : 1,
                       'order_line' : orderlines,                      
                    } ) ;
+<<<<<<< HEAD
             console.log(orderlines);
+=======
+            //console.log(orderlines);
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
             if (to_server){
                 order['order_line'] = [];
                 _(orderlines).each(function(line){
@@ -118,7 +129,10 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             }
             if (!order.client_order_ref) order.client_order_ref = this.id;            
             //if (isNaN(order.id)) delete order.id;            
+<<<<<<< HEAD
             console.log(order)
+=======
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
             return order;
         },
         save:function(){

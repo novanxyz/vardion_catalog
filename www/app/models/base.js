@@ -51,7 +51,11 @@ define(function(require){
                     }),
                     
         Page:       Backbone.View.extend({
+<<<<<<< HEAD
                         el: document.querySelector('body'),
+=======
+                        el: document.getElementsByTagName('body')[0],
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
                         withnav:true,
                         initialize:function(app){                          
                           this.app = app;                          
@@ -77,7 +81,11 @@ define(function(require){
                         },
                         render:function(){                            
                             try {
+<<<<<<< HEAD
                                 this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));                                
+=======
+                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
                             }catch(ex){
                                 console.log(ex);
                             }                                                        

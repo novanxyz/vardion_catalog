@@ -55,7 +55,10 @@ define(function(require) {
         },
         open_login:function(params){            
             $('nav').hide();
+<<<<<<< HEAD
             $('#loading').hide();
+=======
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
             $('#login').show();            
             $('#loginbutton').on('click',_.bind(this.do_login,this));
         },
@@ -68,7 +71,11 @@ define(function(require) {
           this.show_loading();
           localStorage.clear();
           return rpc.call(params,null).then(function(res){                            
+<<<<<<< HEAD
               self.ensure_db(res.result).done(_.bind(self.default_action,self));
+=======
+              self.ensure_db(res);
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
           });
         },
         open_about:function(){

@@ -44,5 +44,8 @@
     <plugin name="cordova-custom-config" spec="^5.0.2" />
     <plugin name="com.dfranzen.cordova.FileStorage" spec="~0.0.1" />
     <engine name="android" spec="^7.0.0" />
+<<<<<<< HEAD
     <engine name="browser" spec="^5.0.3" />
+=======
+>>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
 </widget>
