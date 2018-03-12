@@ -34,6 +34,7 @@ define(function(require) {
             this.cartView = new CartView(this);                  
             this.catalogView = new CatalogView(this);
             console.log(typeof(this.cartView),typeof(this.catalogView));
+            console.log(this.cartView,this.catalogView);
             rets.push(this.catalogView.prepare());
             rets.push(this.cartView.prepare());
             return $.when.apply($, rets).promise();
@@ -44,11 +45,13 @@ define(function(require) {
         open_cart:function(params){            
             this.cartView.start();
             console.log(typeof(this.cartView),typeof(this.catalogView))
+            console.log(this.cartView,this.catalogView);
         },
         open_catalog:function(params){                  
             this.catalogView.set_order(this.cartView.cart);
             this.catalogView.start();
             console.log(typeof(this.cartView),typeof(this.catalogView));
+            console.log(this.cartView,this.catalogView);
         },
         open_login:function(params){            
             $('nav').hide();
