@@ -51,7 +51,7 @@ define(function(require){
                     }),
                     
         Page:       Backbone.View.extend({
-                        el: document.getElementsByTagName('body')[0],
+                        el: document.querySelector('body'),
                         withnav:true,
                         initialize:function(app){                          
                           this.app = app;                          
@@ -77,7 +77,7 @@ define(function(require){
                         },
                         render:function(){                            
                             try {
-                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));
+                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));                                
                             }catch(ex){
                                 console.log(ex);
                             }                                                        

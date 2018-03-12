@@ -10,26 +10,32 @@
         <link rel="stylesheet" href="css/color.css">
     </head>
     <body>
-        <main id="login" class="login page no-nav" style="display: none"> 
-        <div class="px-lg-md login-page" style="margin-top: 56px">
-            <div class="container">
-                <div id="loginform" >
-                      <div class="img text-center">
-                          <img src="img/logo.png" style="width:50%" />
-                      </div>
-                      <div class="form-group">
-                        <label for="username">Email address</label>
-                        <input type="text" class="form-control" id="username" 
-                               aria-describedby="emailHelp" placeholder="Enter email" name="username" value="admin"/>
-                      </div>
-                      <div class="form-group">
-                        <label for="password">Password</label>
-                        <input name="password" type="password" class="form-control" id="password" value="pos"/>
-                      </div>
-                      <a id="loginbutton" class="btn btn-primary btn-lg btn-block text-white">Submit</a>
+        <main id="login" class="login page no-nav" style="display:none;margin-top:0px"> 
+            <div class="px-lg-md login-page" style="margin-top: 56px">
+                <div class="container">
+                    <div id="loginform" >
+                          <div class="img text-center">
+                              <img src="img/logo.png" style="width:50%" />
+                          </div>
+                          <div class="form-group">
+                            <label for="username">Email address</label>
+                            <input type="text" class="form-control" id="username" 
+                                   aria-describedby="emailHelp" placeholder="Enter email" name="username" value="admin"/>
+                          </div>
+                          <div class="form-group">
+                            <label for="password">Password</label>
+                            <input name="password" type="password" class="form-control" id="password" value="pos"/>
+                          </div>
+                          <a id="loginbutton" class="btn btn-primary btn-lg btn-block text-white">Login</a>
+                          <a id="registerbutton" class="text-white">Log as Guest</a>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="px-lg-md register-page" id="register">
+                <div class="container">
+                
+                </div>
+            </div>
         </main>
         <header class="fixed-top">
         <nav class="navbar navbar-light bg-primary  text-white hide">
@@ -37,7 +43,7 @@
             <button type="button" class="navbar navbar-toggle pull-right" data-toggle="collapse" data-target="#menu">
                 <i class="material-icons">more_vert</i>
             </button>
-            <a href="#cart" class="pull-right cart cart-toggle text-white"><i class="material-icons">shopping_cart</i>
+            <a href="#cart" class="pull-right cart cart-toggle text-white btn" name="save_cart"><i class="material-icons">shopping_cart</i>
                 <span class="cart-num">0</span>
             </a>
         </nav>
@@ -48,15 +54,15 @@
             </ul>
         </div>   
         </header>
-        <section id="loading" class="bg-default page" style="display:none;">                        
+        <section id="loading" class="bg-default page" style="">                        
             <div class="loader">
                 <img src="img/loading.svg"/>
             </div>
         </section>        
         
         <script src="cordova.js"></script>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>        
+        <script src="lib/jquery/jquery-3.3.1.min.js"></script>
+        <script src="lib/bootstrap/bootstrap.min.js"></script>        
         <script data-main="js/main" src="lib/require/require.js"></script>        
     </body>
 </html>

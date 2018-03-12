@@ -22,8 +22,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
             if (json.image){
                 this.save_image(json.id,json.image);
             }            
-            delete json.image;
-            console.log(json.categ_id);
+            delete json.image;            
             json.categ_id = _.isArray(json.categ_id) ? { id: json.categ_id[0],name:json.categ_id[1].split('/').pop().trim() } : json.categ_id;
             return json;
         },
@@ -48,7 +47,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
                 context: this.app.context,
                 domain: [['sale_ok','=',true],['available_in_pos','=',true]],
                 fields: ['id','name','description_sale','default_code','barcode','categ_id','list_price','standard_price','qty_available','image','uom_id','taxes_id'],
-                limit: 10,
+                limit: 25,
                 offset: this.length,
             }
         },
