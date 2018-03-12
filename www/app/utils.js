@@ -72,8 +72,10 @@ var Utils = {
     },
     contactToPartner:function(contact){
 //        console.log(contact);        
-        var phone   = _(contact.phoneNumbers).find(function(ph){return ph.type === 'work' || ph.pref;});
+        if (!contact){return false;}
+        var phone   = _(contact.phoneNumbers).find(function(ph){return ph.type === 'work' || ph.pref;} );
         phone = phone ? phone: contact.phoneNumbers[0];                            
+        
         var partner = {
             name    : contact.name.formatted,
             phone   : phone.value,
