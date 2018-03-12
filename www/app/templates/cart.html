@@ -1,0 +1,83 @@
+<main data-role="page" class="page cart tab-content mt-5" id="cart" >
+    <section>
+        <ul class="nav nav-tabs bg-primary" id="orders" role="tablist">
+            <li class="nav-item active " >
+                <t t-log="cart"/>
+                <a class="nav-link text-white active" data-toggle="tab"  role="tab"  
+                   t-att-id="'tab-'+ cart.id"
+                   t-att-aria-controls="'so' + cart.cid" >
+                    <t t-esc="cart.get_name()"/>
+                </a>
+            </li>
+            <li t-foreach="cart_ids" t-as="c" class="nav-item select_cart" t-if="c != cart.get('client_order_ref')" >
+                <a class="nav-link text-white " data-toggle="tab"  role="tab"  t-att-name='c'
+                   t-att-id="'tab-'+ c" t-att-href="'#so'+c" t-att-aria-controls="'so' + c" >
+                    <t t-esc="c.substr(-4)"/>
+                </a>
+            </li>
+            <li class="nav-item" t-if="cart_ids.length lt 5">
+                <a class="nav-link text-white btn" name="add_cart" data-toggle="add"  role="add"  >
+                    <i class="material-icons">add</i>
+                </a>
+            </li>
+        </ul>        
+        <div class="tab-content order" id="order">
+            <div role="tabpanel" class="tab-pane active"  
+                 t-att-id="'so'+cart.id" t-att-aria-labelledby="'so'+cart.cid">                
+                <div class="head bg-primary-light text-white p-3">
+                    <div class="container">
+                        <div class="total">
+                            <label>Total</label>
+                            <h4 class="total-val ">
+                                <t t-esc='format_currency(cart.get_total_price())'/>
+                            </h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 style="display:inline">Partner</h6>
+                                <a class="btn pull-right" name='select_partner'><i class="material-icons">contacts</i></a>
+                                <h6 class="partner-val" >
+                                    <t t-esc='cart.get_partner()'/>
+                                </h6>
+                            </div>
+                            <div class="col-6">
+                                <h6 style="display:inline">Date</h6>
+                                <a class="btn pull-right" name='select_date'><i class="material-icons">event</i></a>
+                                <h6 class="date-val" >
+                                    <t t-esc='cart.get_order_date()'/>
+                                </h6>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-warning" role="alert" style="margin-bottom: 0;min-height: 56px;"><t t-raw="get_notification()"/></div>                
+                <div class="container so-list">
+                    <ul class="list-group list-group-flush" style="width: 100%">
+                        <li t-foreach="cart.orderlines.models"  t-as="line" t-att-id="'line-' + line.cid " class="list-group-item ">
+                            <span class="qty"><t t-esc="line.get_qty()"/></span>
+                            <span class="item"><t t-esc="line.get_display_name()"/></span>
+                            <span class="price"><t t-esc="format_currency(line.get_price())"/> </span>
+                        </li>
+                    </ul>
+                    <t t-if='! get_notification()'>
+                    <div class="container note">
+                    <textarea name="note" class="note" placeholder="Order Note... " style="width: 100%">                        
+                        <t t-esc="cart.get('note')"/>
+                    </textarea>
+                    </div>
+                    <div class="row footer" >
+                        <a class="btn btn-danger text-white col-6" name="cancel_order">Cancel</a>
+                        <a class="btn btn-secondary text-white col-6 pull-right" name="confirm_order">Confirm</a>
+                    </div>
+                    </t>
+                </div>
+            </div>            
+        </div>
+    </section>
+    <section id="cart-buttons">
+        <a class="btn"><i class="material-icons"></i></a>
+        <a class="btn"><i class="material-icons"></i></a>
+        <a class="btn"><i class="material-icons"></i></a>
+    </section>
+</main>
