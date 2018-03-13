@@ -113,11 +113,7 @@ header #menu li {min-height: 56px;padding: 16px; }
   transform: translate(-50%,-50%);
 }
 
-<<<<<<< HEAD
 .search { position: relative; display:inline-block;width: 100%; }
-=======
-.search { position: relative; display:inline-block;width: calc(100% - 90px) }
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
 .search input { 
     text-indent: 30px; 
     width: 100%;
