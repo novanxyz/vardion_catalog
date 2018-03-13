@@ -51,11 +51,12 @@ main.no-nav ~ header {display: none}
 .page {
     width: 100vw;
     height: 100vh;
-    position: absolute;
+    position: relative;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    overflow-x:hidden;
 }
 
 .page.cart .nav-tabs .nav-item {
@@ -131,3 +132,11 @@ input[type=radio] {display: none}
 .header .buttons label {margin-bottom: 0px}
 input:not(:checked) + label > i {content: "dashboard"; }
 input:checked       + label > i{content: "reorder";}
+
+.bottom-button{
+    background: #495057;   
+    margin: 0 auto !Important;
+    text-align:center;
+}
+.bottom-button .btn{width: 32%;padding: 12px;}
+.bottom-button .btn span{display: block}
