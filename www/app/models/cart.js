@@ -23,6 +23,12 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
         get_subtotal:function(){
             return this.get_qty()  * this.get('price_unit') * ((100-this.get('discount'))/100);
         },
+        get_tax:function(){
+            return 0;
+        },
+        get_discount:function(){
+            return this.get_qty()  * this.get('price_unit') * ((this.get('discount'))/100);
+        },
         toJSON:function(to_server){
             return _.extend(Backbone.Model.prototype.toJSON.apply(this,arguments), {
                 'name' : this.get_display_name(),                
@@ -38,7 +44,9 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
        model : Orderline,       
    });
    var Pricelist = Base.Model.extend({
-       
+      get_name:function() {
+          return this.get('pricelist_id')[1];
+      }
    });
    return Base.Model.extend({
         _name : 'sale.order',        
@@ -157,12 +165,15 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             }
         },
         calculate:function(){
+            console.log(this.pricelist);
             return true;
         },
         set_pricelist:function(pl_id){
             var list = JSON.parse(localStorage[this.app.DB_ID + '_settings_product_pricelist_item']);
             var pl = _(list).find(function(l){return l.pricelist_id[0] == pl_id });
-            this.pricelist = new Pricelist(pl);
+            console.log(pl,pl_id,list);
+            this.pricelist = new Pricelist(pl,this.app);
+            this.calculate();
         },
         get_name:function(){            
             return 'SO#' + String(this.id).substr(-4);
@@ -170,6 +181,16 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
         get_total:function(){
             return this.orderlines.reduce(function(p,c){
                 return p + c.get_subtotal();
+            },0);
+        },
+        get_total_discount:function(){
+            return this.orderlines.reduce(function(p,c){
+                return p + c.get_discount();
+            },0);
+        },
+        get_total_tax:function(){
+            return this.orderlines.reduce(function(p,c){
+                return p + c.get_tax();
             },0);
         },
         get_partner:function(){

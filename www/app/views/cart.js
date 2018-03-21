@@ -11,7 +11,7 @@ define(function(require){
            'click   li.line'            : 'select_line',
            'change  input.qty'          : 'update_qty',
            'blur    input.qty'          : 'update_qty',
-           'blur    .so-list'           : 'deselect_line'
+           'blur    .so-list'           : 'deselect_line',
            'blur    texarea.note'       : 'update_note',
        },
        initialize:function(app){          
@@ -78,8 +78,8 @@ define(function(require){
             this.$el.find('.cart h4.total-val').html(Utils.format_currency(this.cart.get_total()))
             this.$el.find("#order-status .modal-body").html(
                     this.cart.get('state') + '<br/>' +
-                    this.cart.get('payment_term_id')[1]+'<br/>'+
-                    this.cart.get('pricelist_id')[1] +'<br/>'
+                    this.cart.payment_term.name+'<br/>'+
+                    this.cart.pricelist.get('name') +'<br/>'
                     );
         },
         add_cart:function(){
@@ -291,8 +291,8 @@ define(function(require){
                         };
                 window.plugins.listpicker.showPicker(picker,
                     function(item){
-                        self.cart.set('pricelist_id',item.value);
-                        self.cart.calculate();
+                        console.log(item);
+                        self.cart.set_pricelist(item);                        
                         self.render();
                     });       
             //});            
@@ -308,8 +308,10 @@ define(function(require){
                         };
                 window.plugins.listpicker.showPicker(picker,
                     function(item){
-                        self.cart.set('payment_term_id',item.value);
-                        self.render();
+                        self.cart.set('payment_term_id',item);
+                        var term = _(terms).where({value:item});
+                        self.cart.payment_term = {id:term.value,name:term.text} ;
+//                        self.render();
                     });       
             //});            
         },

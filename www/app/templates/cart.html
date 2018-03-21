@@ -57,8 +57,8 @@
                     <ul class="list-group list-group-flush lines" style="width: 100%">
                         <li t-foreach="cart.orderlines.models"  t-as="line" t-att-id="'line-' + line.cid " t-att-data-id="line.cid"
                             class="list-group-item line " >
-                            <t t-log="selected_line"/>
-                            <t t-log="line"/>
+<!--                            <t t-log="selected_line"/>
+                            <t t-log="line"/>-->
                             <span class="qty"><t t-esc="line.get_qty()"/></span>
                             <div class="qty" >
                                 <button class="btn btn-primary" name="remove_qty"  t-att-data-id="line.cid"><i class="material-icons">remove</i></button>
@@ -98,6 +98,12 @@
                 <b><t t-esc="cart.get_name()"/></b>
             </div>
             <div class="modal-body">                
+                <t t-esc="cart.get('state')"/><br/>
+                <t t-esc="format_currency(cart.get_total())"/><br/>
+                <t t-esc="format_currency(cart.get_total_tax())"/><br/>
+                <t t-esc="format_currency(cart.get_total_discount())"/><br/>                
+                <t t-if="cart.payment_term" t-esc="cart.payment_term.name"/><br/>
+                <t t-esc="cart.pricelist.get_name()"/><br/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
