@@ -36,7 +36,7 @@ define(function(require) {
             this.catalogView = new CatalogView(this);
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
-            rets.push(this.catalogView.prepare());
+//            rets.push(this.catalogView.prepare());
             rets.push(this.cartView.prepare());
             return $.when.apply($, rets).promise();
         },

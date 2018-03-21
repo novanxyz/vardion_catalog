@@ -22,10 +22,11 @@ define(function(require){
           this.orders = new Backbone.Collection([this.cart]);
           this.selected_line = null;
           this.auto_save = null;
-          //this.ready = this.prepare();
+//          this.ready = this.prepare();
+//          console.log(this.ready);
         },
         prepare:function(){
-            var models = { 'product.pricelist.item/search_read' : {'args': [[] ,[]] },
+            var models = { 'product.pricelist.item/search_read' : {'args': [[['currency_id','=',13]] ,[]] },
                            'account.payment.term/search_read'   : {'args': [[['active','=','true']],[]]},
                            'account.tax/search_read'            : {'args': [[['type_tax_use','=','sale']],[]]},
                            'sale.order/default_get'             : {'args': [["origin","order_line","currency_id","team_id","partner_id","amount_tax","delivery_count","company_id","note","picking_policy","state",
@@ -41,9 +42,9 @@ define(function(require){
             }
             
             return Object.keys(models).reduce(function(prev,model){
-                var save_result = (function(res){
-                    var _model = model.split('/').shift().replace(/\./g,'_');                                    
-
+                var _model = model.split('/').shift().replace(/\./g,'_');
+                if ( localStorage[ls_name +'_'+_model] ) return prev;
+                var save_result = (function(res){                    
                     localStorage[ls_name +'_'+_model] = JSON.stringify(res);
                 });
                 return prev.then(function(){return request(model,models[model],save_result) ; });

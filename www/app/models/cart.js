@@ -45,6 +45,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
    });
    var Pricelist = Base.Model.extend({
       get_name:function() {
+          if (!this.get('pricelist_id')) return 'default';
           return this.get('pricelist_id')[1];
       }
    });
@@ -164,14 +165,12 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 localStorage[this.localStorage.name] = ids.replace(client_order_ref + ',','');
             }
         },
-        calculate:function(){
-            console.log(this.pricelist);
+        calculate:function(){            
             return true;
         },
         set_pricelist:function(pl_id){
             var list = JSON.parse(localStorage[this.app.DB_ID + '_settings_product_pricelist_item']);
-            var pl = _(list).find(function(l){return l.pricelist_id[0] == pl_id });
-            console.log(pl,pl_id,list);
+            var pl = _(list).find(function(l){return l.pricelist_id[0] == pl_id });            
             this.pricelist = new Pricelist(pl,this.app);
             this.calculate();
         },
