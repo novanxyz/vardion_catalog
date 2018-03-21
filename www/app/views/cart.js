@@ -27,7 +27,7 @@ define(function(require){
         prepare:function(){
             var models = { 'product.pricelist.item/search_read' : {'args': [[] ,[]] },
                            'account.payment.term/search_read'   : {'args': [[['active','=','true']],[]]},
-                           'account.tax/search_read'            : {'args': [[['active','=','true']],[]]},
+                           'account.tax/search_read'            : {'args': [[['type_tax_use','=','sale']],[]]},
                            'sale.order/default_get'             : {'args': [["origin","order_line","currency_id","team_id","partner_id","amount_tax","delivery_count","company_id","note","picking_policy","state",
                                        "pricelist_id","project_id","incoterm","validity_date","warehouse_id","payment_term_id","fiscal_position_id"]]}
                         };
@@ -76,6 +76,11 @@ define(function(require){
         },
         update_summary:function(){
             this.$el.find('.cart h4.total-val').html(Utils.format_currency(this.cart.get_total()))
+            this.$el.find("#order-status .modal-body").html(
+                    this.cart.get('state') + '<br/>' +
+                    this.cart.get('payment_term_id')[1]+'<br/>'+
+                    this.cart.get('pricelist_id')[1] +'<br/>'
+                    );
         },
         add_cart:function(){
             var ids = this.cart_ids.filter(isNaN);
