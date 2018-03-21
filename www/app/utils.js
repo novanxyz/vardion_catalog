@@ -72,15 +72,9 @@ var Utils = {
     },
     contactToPartner:function(contact){
 //        console.log(contact);        
-<<<<<<< HEAD
         if (!contact){return false;}
         var phone   = _(contact.phoneNumbers).find(function(ph){return ph.type === 'work' || ph.pref;} );
-        phone = phone ? phone: contact.phoneNumbers[0];                            
-        
-=======
-        var phone   = _(contact.phoneNumbers).find(function(ph){return ph.type === 'work' || ph.pref;});
-        phone = phone ? phone: contact.phoneNumbers[0];                            
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
+        phone = phone ? phone: contact.phoneNumbers[0];                                   
         var partner = {
             name    : contact.name.formatted,
             phone   : phone.value,
@@ -126,24 +120,46 @@ var Utils = {
 
         return contact;
     },
+    toast:function(msg){
+        window.plugins.toast.showWithOptions({
+          message: msg,
+          duration: "short", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
+          position: "top",
+          addPixelsY: 175,  // added a negative value to move it up a bit (default 0)
+//                  addPixelsX: 50,
+          styling: {
+            opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
+//                    backgroundColor: '#FF0000', // make sure you use #RRGGBB. Default #333333
+//                    textColor: '#FFFFFF', // Ditto. Default #FFFFFF
+//                    textSize: 20.5, // Default is approx. 13.
+            cornerRadius: 20, // minimum is 0 (square). iOS default 20, Android default 100
+            horizontalPadding: 20, // iOS default 16, Android default 50
+            verticalPadding: 16 // iOS default 12, Android default 30
+          }
+        });
+    },
     get_product:function(product_id){
       var products = JSON.parse(localStorage['apps_catalog@pos_products' ] || '[]');                      
-      products = products.records;
-      console.log(products);
+      products = products.records;      
       return _(products).where({'id':product_id});  
     },
+    get_pricelist:function(){
+        var list = JSON.parse(localStorage[DB_ID + '_settings_product_pricelist_item']);
+        return _(list).map(function(p){return p.pricelist_id});        
+    },
+    get_payment_terms:function(){
+        var terms = JSON.parse(localStorage[DB_ID + '_settings_account_payment_term']);
+        return _(terms).map(function(t){return [t.id,t.display_name]});        
+    },
+    get_report:function(model,id){
+        var reports = {'sale.order':'sale.report_saleorder'};
+        return this.app.url + '/report/pdf/' + reports[model] +'/' + id ;
+    },
     get_defaults:function(model){
+        //console.log(this);
         var dict= {
             'sale.order.line' : {'qty': 1,'discount':0,'note': '',},
-            'sale.order'      : {   'note': '',
-                                    'company_id':1,
-                                    'picking_policy': 'direct',
-                                    'payment_term_id': 3,
-                                    'origin'       : 'apps_catalog',
-                                    'pricelist_id' : 1,
-                                    'date_order': new Date(),
-                                    'user_id':  1,
-                                }
+            'sale.order'      : JSON.parse(localStorage['apps_catalog@pos' + '_settings_sale_order']),
             };
         return _.result(dict,model);
     }

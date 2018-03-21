@@ -51,11 +51,7 @@ define(function(require){
                     }),
                     
         Page:       Backbone.View.extend({
-<<<<<<< HEAD
                         el: document.querySelector('body'),
-=======
-                        el: document.getElementsByTagName('body')[0],
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
                         withnav:true,
                         initialize:function(app){                          
                           this.app = app;                          
@@ -72,20 +68,15 @@ define(function(require){
                           this.$el.on('click','.btn[name]',_.bind(this.button_handler,this));
                           this.ready = $.when();
                           return this;
-                        },
-                        
+                        },                        
                         prepare:function(){
                             return true;
                             var tpl = require('text!templates/' + this._name +'.html');                              
                             this.app.qweb.add_template(Utils.make_template(this._name,tpl));
                         },
                         render:function(){                            
-                            try {
-<<<<<<< HEAD
-                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));                                
-=======
-                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,this));
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
+                            try {                                
+                                this.$el.find('main').replaceWith(this.app.qweb.render(this._name,_(this).clone()) );
                             }catch(ex){
                                 console.log(ex);
                             }                                                        
@@ -114,8 +105,11 @@ define(function(require){
                             $('#loading').hide();
                         },                        
                         button_handler:function(ev){                            
-                            var name = ($(ev.currentTarget).attr('name'));                            
-                            return _.result(this,name);
+                            var name = ($(ev.currentTarget).attr('name'));
+                            //console.log(this,this.prototype,this.__proto__[name]);
+                            return _.result(this,name);//.call(this,arguments);
+                            return this.__proto__[name].call(this,arguments);
+                            return _.bind(this.name,this).call(this,arguments);
                             //return _.result(this,namearguments);                            
                         }
                     }),

@@ -16,16 +16,11 @@
     "cordova-custom-config": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-<<<<<<< HEAD
     "cordova-plugin-file": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.vardion.catalog"
-=======
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "com.vardion.catalog"
->>>>>>> badc1257eba3211e872d360a3a4ae0272652c57e
     }
   },
   "dependent_plugins": {}

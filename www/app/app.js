@@ -25,6 +25,7 @@ define(function(require) {
           this.url      = url.origin;
           this.dbname   = 'dbname' in config ? config.dbname : url.searchParams.get('db');
           this.DB_ID    = this._name + '@' + this.dbname;          
+          window.DB_ID  = this.DB_ID;
           this.modules  = config.modules || [] ;
           this.ready    = this.ensure_db();          
           Utils.app     = this;
@@ -33,8 +34,8 @@ define(function(require) {
             var rets = [];                        
             this.cartView = new CartView(this);                  
             this.catalogView = new CatalogView(this);
-            console.log(typeof(this.cartView),typeof(this.catalogView));
-            console.log(this.cartView,this.catalogView);
+//            console.log(typeof(this.cartView),typeof(this.catalogView));
+//            console.log(this.cartView,this.catalogView);
             rets.push(this.catalogView.prepare());
             rets.push(this.cartView.prepare());
             return $.when.apply($, rets).promise();
@@ -44,23 +45,29 @@ define(function(require) {
         },
         open_cart:function(params){            
             this.cartView.start();
-            console.log(typeof(this.cartView),typeof(this.catalogView))
-            console.log(this.cartView,this.catalogView);
+//            console.log(typeof(this.cartView),typeof(this.catalogView))
+//            console.log(this.cartView,this.catalogView);
         },
         open_catalog:function(params){                  
             this.catalogView.set_order(this.cartView.cart);
             this.catalogView.start();
-            console.log(typeof(this.cartView),typeof(this.catalogView));
-            console.log(this.cartView,this.catalogView);
+//            console.log(typeof(this.cartView),typeof(this.catalogView));
+//            console.log(this.cartView,this.catalogView);
         },
         open_login:function(params){            
             $('nav').hide();
-<<<<<<< HEAD
             $('#loading').hide();
-=======
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
             $('#login').show();            
-            $('#loginbutton').on('click',_.bind(this.do_login,this));
+            $('a[name=user_login]').on('click',_.bind(this.do_login,this));
+            $('a[name=guest_login]').on('click',_.bind(this.guest_login,this));            
+        },
+        guest_login:function(){            
+            var params = {'name'    : $('[name=name]').val(),
+                          'phone'   : $('[name=phone]').val(),
+                          'email'   : $('[name=email]').val(),
+                      }                      
+            var rpc = new Backbone.Rpc({url: this.url + '/web/session/authenticate'});
+            console.log(params);
         },
         do_login:function(){
           var self = this;          
@@ -71,11 +78,7 @@ define(function(require) {
           this.show_loading();
           localStorage.clear();
           return rpc.call(params,null).then(function(res){                            
-<<<<<<< HEAD
               self.ensure_db(res.result).done(_.bind(self.default_action,self));
-=======
-              self.ensure_db(res);
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
           });
         },
         open_about:function(){
@@ -134,8 +137,9 @@ define(function(require) {
             }
             delete this.user.currencies;            
             $.extend(this.qweb.default_dict,
-                    {user:this.user, context:this.context, today:new Date()},
-                    Utils 
+                    {user:this.user, context:this.context, today:new Date(),isNaN:isNaN},
+                    Utils,
+                    
                     );                        
             var deffile = $.Deferred();
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {                   

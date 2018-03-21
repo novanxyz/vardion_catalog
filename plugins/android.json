@@ -7,19 +7,25 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-contacts": {
-      "PACKAGE_NAME": "com.vardion.catalog"
-    },
-    "cordova-plugin-datepicker": {
-      "PACKAGE_NAME": "com.vardion.catalog"
-    },
     "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-plugin-contacts": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.vardion.catalog"
     },
-    "cordova-custom-config": {
+    "cordova-plugin-listpicker": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "nl.x-services.plugins.toast": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-plugin-email-composer": {
+      "PACKAGE_NAME": "com.vardion.catalog"
+    },
+    "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "com.vardion.catalog"
     }
   },

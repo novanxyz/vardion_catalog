@@ -5,9 +5,10 @@ requirejs.config({
     	app:			'app',        
     	router:			'router',
     	utils:			'utils',
-        jquery:     	'../lib/jquery/jquery-1.8.2.min',
-        jqmconfig:		'../lib/jqm/jqm-config',        
-        jqm:     		'../lib/jqm/jquery.mobile-1.2.0.min', 
+        jquery:     	'../lib/jquery/jquery-3.3.1.min',
+        bootstrap:     	'../lib/bootstrap/bootstrap.min',
+//        jqmconfig:		'../lib/jqm/jqm-config',        
+//        jqm:     		'../lib/jqm/jquery.mobile-1.2.0.min', 
         underscore: 	'../lib/underscore/underscore-1.4.1.min',
         backbone:   	'../lib/backbone/backbone-0.9.2.min',
         rpc:            '../lib/backbone/backbone.rpc',
@@ -30,7 +31,7 @@ requirejs.config({
         backbone: {
             //These script dependencies should be loaded before loading
             //backbone.js
-            deps: ['jquery', 'underscore'],
+            deps: ['underscore'],
             //Once loaded, use the global 'Backbone' as the
             //module value.
             exports: 'Backbone'
@@ -41,6 +42,9 @@ requirejs.config({
         rpc: {
             deps:['backbone']
         },
+        bootstrap:{
+            deps:['jquery']
+        },
 //        localstorage: {
 //            deps:['backbone']
 //        },
@@ -50,7 +54,7 @@ requirejs.config({
 
 });
 
-require(['app','jquery'], function(App,$) {
+require(['app'], function(App) {
 //var App = require('app');
 function onDeviceReady() {          
     var config = {'dbname': 'pos','server_url':'http://pos.vardion.com?db=pos'}   
@@ -92,6 +96,7 @@ function initSwipe(){
         var endTouch = ev.changedTouches[0];
         var endPos   = {x:endTouch.clientX,y:endTouch.clientY};
         var startPos = {x:startTouch.clientX,y:startTouch.clientY};
+        if (distance(endPos,startPos) < 100) return;
         var event = new CustomEvent('swipe', {'bubbles':true, 
                                detail: {'dir': direction(startPos,endPos),
                                         'delay': ev.timeStamp - startTime,

@@ -153,7 +153,7 @@
                     success: _.bind(function (data, status, response) {                        
                         if (data !== null && data.error !== undef) {
                             this.onError(callback, data, status, response);
-                            console.log(ret);
+//                            console.log(ret);
                             ret.abort(data);
                         } else {
                             //console.log(ret,data,status,response);
@@ -178,12 +178,13 @@
           if (!method && !params) {
               params = model;
           } 
-          if (!params){
+          if ( _.isArray(method) || _.isObject(params) ){
               params = method;
               method = model;
+              model  = this.url.split('/')[6];
           }
           if (_.isArray(params)){
-              var par = {}
+              var par = {};
               par.args = params;
               params = par;
           }
@@ -191,14 +192,18 @@
               params.model = model;
               params.method = method;
           }
-          //var ret = $.Deferred();  
-          return this.query('call',params,function(data,err){
-              console.log(data,err);
-              //ret.resolve(data);
+//          console.log(params,model,method);
+          if (params.hasOwnProperty('args') && params.args != arguments[arguments.length-1] ){
+              params.kwargs =arguments[arguments.length-1];
+          }
+          var ret = $.Deferred();  
+          this.query('call',params,function(data,err){
+              //console.log(data,err);
+              ret.resolve(data);
           }).fail(function(err){
              console.log(err);
           });
-          //return ret;
+          return ret;
         },
 
         // TODO: Document

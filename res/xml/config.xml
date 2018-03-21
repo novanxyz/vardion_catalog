@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature name="Contacts">
-    <param name="android-package" value="org.apache.cordova.contacts.ContactManager" />
+    <param name="android-package" value="org.apache.cordova.contacts.ContactManager" />    
+</feature>
+<feature name="File">
+    <param name="android-package" value="org.apache.cordova.file.FileUtils" />
 </feature>

@@ -38,7 +38,7 @@ define(['models/base','utils','localstorage'],function(Base,Utils,localstorage){
         initialize:function(args,app){
           Base.Collection.prototype.initialize.apply(this,arguments);          
           this.rpc = this.app.get_rpc('/web/dataset/search_read'),                  
-          this.localStorage= new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);            
+          this.localStorage = new localstorage.LocalStorage(this.app.DB_ID + '_'+ this._name);            
           this.on('fetch',_.bind(this.save,this));
         },
         search_param:function(){

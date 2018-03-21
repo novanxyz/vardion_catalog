@@ -1,14 +1,8 @@
 define(['models/base','models/product','localstorage','utils'],function(Base,Product,localstorage,Utils){
    var Orderline = Base.Model.extend({
+       _model: 'sale.order.line',
        defaults: Utils.get_defaults('sale.order.line'),
-<<<<<<< HEAD
        initialize:function(data,options){
-=======
-       initialize:function(data,options){   
-           console.log(options,arguments);
-           console.trace();
-           
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
            this.product = options.product;
            this.order   = options.order;
            this.app     = options.order.app;
@@ -17,23 +11,24 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
            arguments[1] = this.app;
            Base.Model.prototype.initialize.apply(this,arguments);
         },               
-        get_price:function(){
-            return this.get('price_unit') * this.get('qty');
-        },
-        get_qty:function(){
+        get_qty:function(){            
             return this.get('qty');// + '' + this.product.get('uom_id')[1];
+        },
+        get_price:function(){
+            return this.get('price_unit') * this.get_qty();
         },
         get_display_name:function(){            
             return this.product.get_display_name() + this.get('note');
         },
         get_subtotal:function(){
-            return this.get('qty')  * this.get('price_unit') * ((100-this.get('discount'))/100);
+            return this.get_qty()  * this.get('price_unit') * ((100-this.get('discount'))/100);
         },
         toJSON:function(to_server){
             return _.extend(Backbone.Model.prototype.toJSON.apply(this,arguments), {
                 'name' : this.get_display_name(),                
-                'product_uom_qty':this.get('qty'),
+                'product_uom_qty':this.get_qty(),
                 'product_uom': this.product.get('uom_id')[0],
+                'product_id': this.product.id,
             })
             
         },
@@ -41,6 +36,9 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
    });
    var OrderlineCollection = Base.Collection.extend({
        model : Orderline,       
+   });
+   var Pricelist = Base.Model.extend({
+       
    });
    return Base.Model.extend({
         _name : 'sale.order',        
@@ -59,7 +57,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                     json = {'user_id':this.app.user.id};
                 }                                
             }                                    
-            console.log(json,_.isEmpty(json),localStorage[this.localStorage.name]);
+            //console.log(json,_.isEmpty(json),localStorage[this.localStorage.name]);
             json = _.extend(Utils.get_defaults(this._model),json);
             this.fromJSON(json);
             this.save();
@@ -73,8 +71,10 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 this.orderlines.add( new Orderline( 
                                         _.extend(options,{'product_id':product.id,price_unit:product.get_price() }), 
                                         {'product':product, 'order': this} ));           
+                line = this.orderlines.last();         
             }           
             this.trigger('added');
+            return line;
         },
         get_count:function(){
             return this.orderlines.length;
@@ -92,30 +92,43 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 var order_lines=[];
                 for (var l in json.order_line) {
                     var line = json.order_line[l];
-                    var product = this.app.get_product(line['product_id']);
+                    if (line.product_uom_qty) line['qty'] = line.product_uom_qty;
+                    var product_id  = _.isArray(line['product_id']) ?  line['product_id'][0] : line['product_id'];
+                    var product = this.app.get_product(product_id);
                     order_lines.push(new Orderline(line,{'order':this,'product':product}));
                 }
                 delete json.order_line;
                 this.orderlines.reset(order_lines);                                
             }            
+            
+            if (json.payment_term_id && _.isArray(json.payment_term_id)){
+                this.payment_term = _.object(['id','name'],json.payment_term_id);
+                json.payment_term_id = json.payment_term_id[0];
+            }
+            if (json.pricelist_id && _.isArray(json.pricelist_id)){                
+                json.pricelist_id = json.pricelist_id[0];
+            }
+            if (json.pricelist_id){
+                this.set_pricelist(json.pricelist_id);
+            }
+            if (json.warehouse_id && _.isArray(json.warehouse_id)){
+                this.warehouse = _.object(['id','name'],json.warehouse_id);
+                json.warehouse_id = json.warehouse_id[0];
+            }
             if (json.partner_id && _.isArray(json.partner_id)){
                 this.partner = _.object(['id','name'],json.partner_id);
                 json.partner_id = json.partner_id[0];
             }
             this.set(json);
             //console.log(this,json);
-        },
+        },        
         toJSON:function(to_server){
             var orderlines = this.orderlines.toJSON();                    
             var order = _.extend(Backbone.Model.prototype.toJSON.apply(this,arguments), 
                     { 'partner_id' : this.partner ? this.partner.id : 1,
                       'order_line' : orderlines,                      
                    } ) ;
-<<<<<<< HEAD
-            console.log(orderlines);
-=======
-            //console.log(orderlines);
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
+//            console.log(orderlines);
             if (to_server){
                 order['order_line'] = [];
                 _(orderlines).each(function(line){
@@ -126,23 +139,35 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                         return order['order_line'].push([cmd,line.id,line]);
                });
                order['order_line'] = order['order_line'].filter(Boolean);
+               delete order['id']
             }
             if (!order.client_order_ref) order.client_order_ref = this.id;            
             //if (isNaN(order.id)) delete order.id;            
-<<<<<<< HEAD
-            console.log(order)
-=======
->>>>>>> 82aef15568cbec5851131f0a6364eaa5f4e95138
+//            console.log(order)
             return order;
         },
         save:function(){
-            console.log('save',this,this.toJSON());
-            Backbone.Model.prototype.save.apply(this,arguments);
+//            console.log('save',this,this.toJSON());
+            Backbone.Model.prototype.save.apply(this,arguments);            
+            if (!isNaN(this.id)) {
+                var client_order_ref = this.get('client_order_ref');
+                delete localStorage[this.localStorage.name+'-'+client_order_ref];
+                var ids = localStorage[this.localStorage.name];
+                localStorage[this.localStorage.name] = ids.replace(client_order_ref + ',','');
+            }
         },
-        get_name:function(){
-            return 'SO#' + this.get('client_order_ref').substr(-4);
+        calculate:function(){
+            return true;
         },
-        get_total_price:function(){
+        set_pricelist:function(pl_id){
+            var list = JSON.parse(localStorage[this.app.DB_ID + '_settings_product_pricelist_item']);
+            var pl = _(list).find(function(l){return l.pricelist_id[0] == pl_id });
+            this.pricelist = new Pricelist(pl);
+        },
+        get_name:function(){            
+            return 'SO#' + String(this.id).substr(-4);
+        },
+        get_total:function(){
             return this.orderlines.reduce(function(p,c){
                 return p + c.get_subtotal();
             },0);

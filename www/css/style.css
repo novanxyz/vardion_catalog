@@ -1,6 +1,10 @@
 .hide{display: none;}
 main {margin-top: 56px}
 main.no-nav ~ header {display: none}
+
+.loginuser:visible  + .loginguest {display: none}
+.loginuser:not(:visible) + .loginguest {display: block}
+
 .pull-right {float: right}
 .prod.col-6{padding: 0;}
 .card-body{padding: 8px;}
@@ -67,6 +71,17 @@ main.no-nav ~ header {display: none}
 .page.cart .total-val {display: inline;float:right}
 .page.cart .total label {font-size: 1.5rem;font-weight: 500}
 .page.cart .partner-select,.page.cart .date-select{display: inline;float: right}
+
+.page.cart .line div.qty{display:none}
+.page.cart .line.active span.qty{display:none}
+.page.cart .line.active div.qty{display:block}
+.page.cart .line.active input.qty{    
+    width: calc(100% - 112px);
+    border: none;
+    font-size: 14pt;
+    border-bottom: 1px solid #dda007;
+    padding: 8px 10px 8px 5px;
+}  
 
 .page.cart .buttons{
     position: absolute;
@@ -140,3 +155,4 @@ input:checked       + label > i{content: "reorder";}
 }
 .bottom-button .btn{width: 32%;padding: 12px;}
 .bottom-button .btn span{display: block}
+
