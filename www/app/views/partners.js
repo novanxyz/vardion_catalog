@@ -41,7 +41,7 @@ define(function(require){
            this.bind_events();
            var def = $.Deferred();
            $('.btn[role=ok]').click(function(){               
-               var vals = self.$el.find('input[name=partner]').val();
+               var vals = self.$el.find('input[name=partner]:checked').val();
                console.log(vals);
                def.resolve(vals);
            });
@@ -86,7 +86,7 @@ define(function(require){
            if (partner.phone) this.$el.find('#phone').val(partner.phone);
            if (partner.email) this.$el.find('#email').val(partner.email);
            $('.form.partner').show();
-           setTimeout(function(){$('.form.partner').hide();},12000);
+           setTimeout(function(){$('.form.partner').hide();},2500);
        },
        open_contact:function(){
            var self = this;
