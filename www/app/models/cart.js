@@ -1,7 +1,7 @@
 define(['models/base','models/product','localstorage','utils'],function(Base,Product,localstorage,Utils){
    var Orderline = Base.Model.extend({
        _model: 'sale.order.line',
-       defaults: Utils.get_defaults('sale.order.line'),
+       //defaults: Utils.get_defaults('sale.order.line'),
        initialize:function(data,options){
            this.product = options.product;
            this.order   = options.order;
@@ -67,7 +67,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 }                                
             }                                    
             //console.log(json,_.isEmpty(json),localStorage[this.localStorage.name]);
-            json = _.extend(Utils.get_defaults(this._model),json);
+//            json = _.extend(Utils.get_defaults(this._model),json);
             this.fromJSON(json);
             this.save();
         },       
@@ -101,7 +101,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 var order_lines=[];
                 for (var l in json.order_line) {
                     var line = json.order_line[l];
-                    if (line.product_uom_qty) line['qty'] = line.product_uom_qty;
+                    line.qty = line.product_uom_qty ? line.product_uom_qty : line.qty;
                     var product_id  = _.isArray(line['product_id']) ?  line['product_id'][0] : line['product_id'];
                     var product = this.app.get_product(product_id);
                     order_lines.push(new Orderline(line,{'order':this,'product':product}));

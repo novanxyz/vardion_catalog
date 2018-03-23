@@ -47,6 +47,25 @@ var Utils = {
       var blob = new Blob(byteArrays, {type: contentType});
       return blob;
     },
+    get_data:function(models,key){
+        var context = {context:this.app.context};            
+        var self = this;
+        var ls_name = key ? this.app.DB_ID + '_' + key : this.app.DB_ID;            
+        function request(model,args,save_result){
+            var rpc = self.app.get_rpc('/web/dataset/call_kw/' + model);
+            var method = model.split('/').pop();                
+            return rpc.call(method,args,context).then(save_result);
+        }
+        console.log(models);    
+        return Object.keys(models).reduce(function(prev,model){
+            var _model  = model.split('/').shift().replace(/\./g,'_');
+            var args    = _.isArray(models[model])? models[model] : models[model]['args'];            
+            var loaded  = _.isArray(models[model]) ? function(res){localStorage[ls_name +'_'+_model] = JSON.stringify(res);}:models[model]['loaded']; 
+            if ( localStorage[ls_name +'_'+_model] && _.isArray(models[model])  ) return prev;
+            console.log(model,_model,args,loaded);
+            return prev.then(function(){return request(model,args,loaded ) ; });
+        },Promise.resolve());  
+    },
     format_currency:function(value){            
         var currency = this.app.user.currency;
         value = parseFloat(value).formatMoney(currency.digits[1],",",'.') ;
@@ -137,6 +156,10 @@ var Utils = {
             verticalPadding: 16 // iOS default 12, Android default 30
           }
         });
+    },
+    get_partners:function(){
+        var db = localStorage[this.app.DB_ID + '_res_partner'] || '[]';
+        return JSON.parse(db);            
     },
     get_product:function(product_id){
       var products = JSON.parse(localStorage['apps_catalog@pos_products' ] || '[]');                      

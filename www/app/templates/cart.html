@@ -1,5 +1,5 @@
 <main data-role="page" class="page cart tab-content mt-5" id="cart" >
-    <section id="cart-order">
+    <section id="cart-order" t-att-class="'order-' + cart.get('state')">
         <ul class="nav nav-tabs bg-primary" id="orders" role="tablist">
             <li class="nav-item active " >
                 <t t-log="cart"/>
@@ -18,7 +18,7 @@
             </li>
             <li class="nav-item" t-if="cart_ids.length lt 5">
                 <a class="nav-link text-white btn" name="add_cart" data-toggle="add"  role="add"  >
-                    <i class="material-icons">add</i>
+                    <i class="material-icons">add_shopping_cart</i>
                 </a>
             </li>
         </ul>        
@@ -61,9 +61,9 @@
                             <t t-log="line"/>-->
                             <span class="qty"><t t-esc="line.get_qty()"/></span>
                             <div class="qty" >
-                                <button class="btn btn-primary" name="remove_qty"  t-att-data-id="line.cid"><i class="material-icons">remove</i></button>
+                                <button class="btn btn-primary" name="remove_qty"  t-att-data-id="line.cid"><i class="material-icons">remove_circle_outline</i></button>
                                 <input class="qty text-right" type="number" name="qty" t-att-data-id="line.cid" t-att-value="line.get_qty()">
-                                <button class="btn btn-primary" name="add_qty"><i class="material-icons">add</i></button>
+                                <button class="btn btn-primary" name="add_qty"><i class="material-icons">add_circle_outline</i></button>
                             </div>
                             <span class="item"><t t-esc="line.get_display_name()"/></span>
                             <span class="price"><t t-esc="format_currency(line.get_price())"/> </span>
@@ -78,16 +78,28 @@
             </div>            
         </div>
     </section>
-    <section id="cart-buttons" class="bottom-button text-white" style="display:none;">        
-        <a class="btn col-4" name="select_payterm"><i class="material-icons">event</i><span>Payment Term</span></a>
-        <a class="btn col-4" name="select_pricelist"><i class="material-icons">loyalty</i><span>Recalculate Price</span></a>
+    <section id="cart-buttons" class="bottom-button text-white" style="display:none;"> 
+        <!--<div class="cart-buttons">-->
+            <a class="btn col-4" name="select_payterm"><i class="material-icons">event</i><span>Payment Term</span></a>
+        <!--</div>-->
         
-        <a class="btn col-4" name="print"><i class="material-icons">print</i><span>Print</span></a>
-        <a t-if="mode != 'guest'" class="btn col-4" name="sent_email"><i class="material-icons">email</i><span>Send Quotation</span></a>
-        <a class="btn col-4" data-target="#order-status" data-toggle="modal" ><i class="material-icons">info</i><span>Check Status</span></a>
+        <!--<div class="cart-buttons">-->
+            <a class="btn col-4" name="print"><i class="material-icons">print</i><span>Print</span></a>
+            <!--<a t-if="cart.get('state') == 'sale'" class="btn col-4" name="check_status" data-toggle="modal" ><i class="material-icons">info</i><span>Check Status</span></a>-->
+        <!--</div>-->
 <!--        <a class="btn col-4" name="start_pay"><i class="material-icons">payment</i><span>Pay</span></a>-->
 <!--        <a class="btn col-4" name="do_cancel"><i class="material-icons">cancel</i><span>Cancel</span></a>-->
-        <a class="btn col-4" name="confirm_order"><i class="material-icons">check_circle</i><span>Confirm</span></a>
+<!--        <div class="cart-buttons">-->
+            <a t-if="cart.get('state') == 'sale'" class="btn col-4" name="check_status" data-toggle="modal" ><i class="material-icons">info</i><span>Check Status</span></a>
+
+            <a class="btn col-4" name="select_pricelist"><i class="material-icons">loyalty</i><span>Pricelist</span></a>
+            <a t-if="mode != 'guest' or cart.get('state') == 'draft'" class="btn col-4" name="send_email"><i class="material-icons">email</i><span>Send Quotation</span></a>
+            
+            <a t-if="cart.get('state') == 'sent' or cart.get('state') == 'draft'" class="btn col-4" name="confirm_order"><i class="material-icons">check_circle</i><span>Confirm</span></a>
+<!--            <a t-if="cart.get('state') == 'sale'" class="btn col-4" name="cancel_order"><i class="material-icons">block</i><span>Cancel</span></a>-->
+            <a t-if="cart.get('state') != 'done' or cart.get('state') != 'cancel'" class="btn col-4" name="cancel_order"><i class="material-icons">highlight_off</i><span>Cancel</span></a>        
+        <!--</div>-->
+        
     </section>
     
     <div id="order-status" style="display: none" class="modal fade" role="dialog">
@@ -103,7 +115,7 @@
                 <t t-esc="format_currency(cart.get_total_tax())"/><br/>
                 <t t-esc="format_currency(cart.get_total_discount())"/><br/>                
                 <t t-if="cart.payment_term" t-esc="cart.payment_term.name"/><br/>
-                <t t-esc="cart.pricelist.get_name()"/><br/>
+                <t t-if="cart.pricelist" t-esc="cart.pricelist.get_name()"/><br/>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

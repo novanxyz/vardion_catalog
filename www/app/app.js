@@ -4,6 +4,7 @@ define(function(require) {
     var Product = require('models/product');
     var CatalogView = require('views/catalog');
     var CartView = require('views/cart');    
+    var PartnerView = require('views/partners');    
     var AboutView = require('views/about');
     var HelpView = require('views/help');    
     var QWeb2 = require('qweb');
@@ -34,9 +35,12 @@ define(function(require) {
             var rets = [];                        
             this.cartView = new CartView(this);                  
             this.catalogView = new CatalogView(this);
+            this.popup = {};
+            this.popup['partner'] = new PartnerView(this);
+            console.log(this.popup);
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
-//            rets.push(this.catalogView.prepare());
+            rets.push(this.catalogView.prepare());
             rets.push(this.cartView.prepare());
             return $.when.apply($, rets).promise();
         },
@@ -60,6 +64,10 @@ define(function(require) {
             $('#login').show();            
             $('a[name=user_login]').on('click',_.bind(this.do_login,this));
             $('a[name=guest_login]').on('click',_.bind(this.guest_login,this));            
+        },
+        open_popup:function(name,params){
+         console.log(this,this.popup[name],params);
+          return this.popup[name].show(params);  
         },
         guest_login:function(){            
             var params = {'name'    : $('[name=name]').val(),

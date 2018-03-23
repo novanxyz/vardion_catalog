@@ -86,7 +86,7 @@ function initSwipe(){
         startElement = startTouch.target;
     },false);
     document.addEventListener('touchmove',function(ev){
-        ev.preventDefault();
+        //ev.preventDefault();
         //console.log(ev);
     },false);    
     document.addEventListener('touchend',function(ev){

@@ -58,11 +58,11 @@ define(function(require){
             }
             
             this.ready.done(function(){                                
-                if (self.cart.get('partner_id')){
-                    self.select_partner(self.cart.get('partner_id'));
-                }else{
+//                if (self.cart.get('partner_id')){
+//                    //self.select_partner(self.cart.get('partner_id'));
+//                }else{
                     self.render();
-                }                
+//                }                
                 self.show();
             });
         },        
@@ -104,6 +104,17 @@ define(function(require){
         cancel_cart:function(){
             
         },
+        remove_cart:function(){            
+            var id  = this.cart.id;
+            var ids = this.cart_ids.filter(function(i){return i != id;});
+            this.cart.destroy();
+            if (ids.length){                                
+                localStorage[this.app.DB_ID + '_' + Cart.prototype._name] = ids.join(',');
+                this.select_cart(ids[0]);
+            }else{
+                this.add_cart();
+            }
+        },
         select_date:function(){
             var options = {
                 titleText : 'Order Date',
@@ -122,25 +133,13 @@ define(function(require){
         },
         select_partner:function(partner_id){
             var self = this;            
-            function onContact(contact){
-                contact = _.isArray(contact) ? contact[0]:contact;
-                self.cart.partner = Utils.contactToPartner(contact);
-                //console.log(contact,self.cart.partner);
-                self.contact = contact;
-                self.render();
-            }
-            
-            if (partner_id){
-                var clause = new ContactFindOptions();
-                clause.multiple =false;
-                clause.filter = partner_id;
-                clause.contactFields = 'ims' ;
-                clause.hasPhoneNumber=true;
-                var fields       = [navigator.contacts.fieldType.ims];
-                navigator.contacts.find(fields,onContact,null,clause);
-            }else {
-                navigator.contacts.pickContact(onContact);
-            }            
+            return this.app.open_popup('partner',partner_id)
+                    .then(function(res){
+                        self.cart.set('partner_id',res);                        
+                        self.cart.partner  = _(Utils.get_partners()).find(function(p){return p.id == res;});
+                        console.log(Utils.get_partners(),res,self.cart.partner);
+                        self.render();
+                    });            
         },
         register_contact:function(){
             var rpc = this.app.get_rpc('/web/dataset/call_kw/res.partner');
@@ -188,14 +187,14 @@ define(function(require){
                 return '<span>Partner not registered</span><a class="pull-right btn" name="register_contact"><i class="material-icons">cached</i></a>';
             }
             
-            if (this.contact){
-                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;
-                if (vardion_id.value != this.cart.partner.id) {
-                    return '<span>Partner not synchronized yet</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';
-                }
-            }else{                
-                return '<span>Partner not locally saved</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';                
-            }            
+//            if (this.contact){
+//                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;
+//                if (vardion_id.value != this.cart.partner.id) {
+//                    return '<span>Partner not synchronized yet</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';
+//                }
+////            }else{                
+////                return '<span>Partner not locally saved</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';                
+//            }            
         },
         update_note:function(){            
             this.cart.set('note',$('textarea[name=note]').val());
@@ -204,19 +203,20 @@ define(function(require){
         cancel_order:function(){
             var self = this;
             if (isNaN(this.cart.id)){
-                this.cart.destroy();                
+                this.remove_cart();
             }else if (this.cart.get('state') != 'done' || this.cart.get('state') != 'cancel' ) {
                 var rpc = this.app.get_rpc('/web/dataset/call_kw/sale.order/action_cancel');
                 rpc.call('action_cancel',[self.cart.id],{context:Object.assign(this.app.context,{'active_id':this.cart.id})} )
                    .then(function(res){                       
-                        //self.check_status();                
-                    });
-                this.cart.set('state','cancel');
+                        self.cart.set('state','cancel');
+                        self.remove_cart();
+                    });                
             }else{
+                this.remove_cart();
                 Utils.toast("Cannot cancel done order.\n You may delete it by ....");
             }                        
-            this.cart = new Cart({},this.app);
-            this.render();
+//            this.cart = new Cart({},this.app);
+//            this.render();
         },
         confirm_order:function(){
             var rpc = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);
@@ -255,8 +255,7 @@ define(function(require){
            
            var order_fields = ['name','state','order_line','date_order','client_order_ref','warehouse_id','pricelist_id','invoice_status','amount_untaxed','amount_tax','payment_term_id','amount_total'];
            var line_fields  = ['name','product_id','price_unit','discount','uom_id','tax_id','product_uom_qty','qty_delivered','qty_invoiced'];
-           
-           console.log(this.cart);
+                      
            var rpc1 = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);           
            var rpc  = this.app.get_rpc('/web/dataset/call_kw/' + 'sale.order.line');           
            var $def = $.Deferred();
@@ -273,13 +272,16 @@ define(function(require){
                })               
            });
            return $def.always(function(){
-                  //$('#order-status').modal('show');
+                  $('#order-status').modal('show');
            });           
         },        
         print:function(){
-            if (isNaN(this.cart.id)) return alert('Cannot generate report for unconfirmed order');
+            if (isNaN(this.cart.id)) return Utils.toast('Cannot generate report for unconfirmed order');
             var url = Utils.get_report(this.cart._model,this.cart.id);
             return navigator.app.loadUrl(url, { openExternal: true });
+        },
+        send_email:function(){
+            if (isNaN(this.cart.id)) return Utils.toast('Cannot generate report for unconfirmed order');
         },
         select_pricelist:function(){                        
             var self = this;
@@ -292,9 +294,10 @@ define(function(require){
                         };
                 window.plugins.listpicker.showPicker(picker,
                     function(item){
-                        console.log(item);
+//                        console.log(item);
                         self.cart.set_pricelist(item);                        
                         self.render();
+                        $('#order-buttons').show();
                     });       
             //});            
         },
@@ -313,6 +316,7 @@ define(function(require){
                         var term = _(terms).where({value:item});
                         self.cart.payment_term = {id:term.value,name:term.text} ;
 //                        self.render();
+//                        $('#order-buttons').show();
                     });       
             //});            
         },
@@ -353,7 +357,7 @@ define(function(require){
             this.selected_line.set('qty',input.val());
             this.update_summary();
             clearTimeout(this.auto_save);
-            this.auto_save = setTimeout(this.cart.save,15000);
+            this.auto_save = setTimeout( _.bind(this.cart.save,this.cart),15000);
         },
         remove_qty:function(){
             var curTarget =  event.target;

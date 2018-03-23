@@ -31,6 +31,7 @@ define(function(require){
                 };
                 self.render();
                 self.show();
+                console.log(self);
             });            
         },        
         set_order:function(cart){            
@@ -48,7 +49,7 @@ define(function(require){
             var line = this.cart.add_product(product,options);            
             Utils.toast(line.get_qty() + ' x ' + line.get_display_name() + ' = ' + Utils.format_currency(line.get_price()) + "\n Total:" + Utils.format_currency(this.cart.get_total()));            
             clearTimeout(this.auto_save);
-            this.auto_save = setTimeout(this.cart.save,15000);
+            this.auto_save = setTimeout( _.bind(this.cart.save,this.cart),15000);
         },
         save_cart:function(){
             this.cart.save();            
