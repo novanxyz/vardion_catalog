@@ -140,28 +140,7 @@ define(function(require){
                         console.log(Utils.get_partners(),res,self.cart.partner);
                         self.render();
                     });            
-        },
-        register_contact:function(){
-            var rpc = this.app.get_rpc('/web/dataset/call_kw/res.partner');
-            var self = this;
-            return rpc.call('find_or_create',[this.cart.partner], {}  ).then(function(res){                                
-                self.cart.partner.id = res;
-                self.cart.save();                
-                if (!self.contact.ims){self.contact.ims = [];}
-                
-                try {
-                    self.contact.ims.push(new ContactField('vardion',self.cart.partner.id,true));
-                    console.log(self.contact);
-                    self.contact.save(function(ret){self.render();
-                                            console.log(self.contact , ' saved' , ret);
-                                      },function(ret){
-                                            console.log(self.contact , ' error' , ret);
-                                    });
-                }catch (ex){
-                    console.log("ERROR REGISTER CONTACT",ex);
-                }                                
-            });
-        },
+        },        
         update_contact:function(){
             if (! this.contact) {
                 this.contact =  navigator.contacts.create(Utils.partnerToContact(this.cart.partner));
@@ -183,9 +162,9 @@ define(function(require){
             if (!this.cart.partner.email ) {
                 return '<span>Partner doesn\'t have email</span><a class="pull-right btn" name="select_partner"><i class="material-icons">contacts</i></a>';
             }
-            if (!this.cart.partner.id ) {
-                return '<span>Partner not registered</span><a class="pull-right btn" name="register_contact"><i class="material-icons">cached</i></a>';
-            }
+//            if (!this.cart.partner.id ) {
+//                return '<span>Partner not registered</span><a class="pull-right btn" name="register_contact"><i class="material-icons">cached</i></a>';
+//            }
             
 //            if (this.contact){
 //                var vardion_id  = (this.contact.ims) ? _(this.contact.ims).find(function(im){return im.type =='vardion'}) : false;

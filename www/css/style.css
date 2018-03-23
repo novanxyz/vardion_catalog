@@ -181,7 +181,7 @@ input:checked       + label > i{content: "reorder";}
 .button-footer {
     padding: 4px 8px;
     position: absolute;
-    bottom: 0p;    
+    bottom: 0px;    
     height: 56px;
 }
 .button-footer button {

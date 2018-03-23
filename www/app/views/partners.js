@@ -18,11 +18,7 @@ define(function(require){
         return o;
     };
     return Base.Popup.extend({
-        _name : 'partners',    
-        events:{
-            'click btn[name=open_contact]': 'open_contact',
-            
-        },
+        _name : 'partners',
        initialize:function(app){
            Base.Popup.prototype.initialize.apply(this,arguments);
            var models = {'res.partner/search_read':
@@ -33,8 +29,9 @@ define(function(require){
        },
        bind_events:function(){
            console.log(this.$el);
-           $('input:radio').change(_.bind(this.partner_selected,this));           
-           $('#search_input').keyup(_.bind(this.search,this));
+           this.$el.on('change','input:radio',_.bind(this.partner_selected,this));           
+           this.$el.on('keyup','.search input',_.bind(this.search,this));
+           this.$el.on('click','.btn[name=open_contact]',_.bind(this.open_contact,this));
        },       
        show:function(params){           
            this.partners = Utils.get_partners();
@@ -60,7 +57,7 @@ define(function(require){
            this.$el.remove();           
        },
        search:function(ev){
-            var q = $(this).val().trim().toLowerCase();            
+            var q = this.$el.find('.search input').val().trim().toLowerCase();            
             if (q.length < 3) return $('li.item').show();
             $('li.item').hide();
             _(this.partners).each(function(p){
@@ -95,24 +92,30 @@ define(function(require){
            var self = this;
            function onContact(contact){
                 contact = _.isArray(contact) ? contact[0]:contact;
-                self.cart.partner = Utils.contactToPartner(contact);
-                //console.log(contact,self.cart.partner);
-                self.contact = contact;
-                self.render();
+                var partner = Utils.contactToPartner(contact);                                
+                if (partner.email && partner.phone){
+                    self.register_contact(partner);
+                }else{
+                    Utils.toast("Cannot use contact without email and phone");
+                }
             }
-            
-            if (partner_id){
-                var clause = new ContactFindOptions();
-                clause.multiple =false;
-                clause.filter = partner_id;
-                clause.contactFields = 'ims' ;
-                clause.hasPhoneNumber=true;
-                var fields       = [navigator.contacts.fieldType.ims];
-                navigator.contacts.find(fields,onContact,null,clause);
-            }else {
-                navigator.contacts.pickContact(onContact);
-            }            
+            navigator.contacts.pickContact(onContact);                       
        },
+       register_contact:function(partner){
+            var rpc = this.app.get_rpc('/web/dataset/call_kw/res.partner');
+            var self = this;
+            return rpc.call('find_or_create',[partner], {context:this.app.context}  ).then(function(res){                                
+                    partner.id = res;
+                    self.partners.push(partner);
+                    var added = $('li.item[data-id='+res+']');
+                    added.click();
+                    self.render();
+                    self.$el.find('.list.partner').animate( {scrollTop: added.offset().top - 56    },500);
+//                }catch (ex){
+//                    console.log("ERROR REGISTER CONTACT",ex);
+//                }                                
+            });
+        },
        
     });   
 })
