@@ -55,6 +55,7 @@ define(function(require){
        close:function(){
            this.prev_view.show();
            this.$el.remove();           
+           $('section.popup').remove();
        },
        search:function(ev){
             var q = this.$el.find('.search input').val().trim().toLowerCase();            
