@@ -134,10 +134,10 @@ define(function(require){
         select_partner:function(partner_id){
             var self = this;            
             return this.app.open_popup('partner',partner_id)
-                    .then(function(res){
-                        self.cart.set('partner_id',res);                        
-                        self.cart.partner  = _(Utils.get_partners()).find(function(p){return p.id == res;});
-                        console.log(Utils.get_partners(),res,self.cart.partner);
+                    .then(function(partner){
+                        self.cart.set('partner_id',partner.id);                        
+                        self.cart.partner  = partner;
+                        self.cart.save();
                         self.render();
                     });            
         },        

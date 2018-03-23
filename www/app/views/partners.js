@@ -41,9 +41,9 @@ define(function(require){
            this.bind_events();
            var def = $.Deferred();
            $('.btn[role=ok]').click(function(){               
-               var vals = self.$el.find('input[name=partner]:checked').val();
-               console.log(vals);
-               def.resolve(vals);
+               var partner_id = self.$el.find('input[name=partner]:checked').val();
+               var partner = _(self.partners).find(function (p) {return p.id == partner_id;});           
+               def.resolve(partner);
            });
            $('.btn[role=cancel]').click(function(){
                def.reject();
