@@ -110,6 +110,8 @@ define(function(require){
                 },                              
                 show:function(){
                     $('main').show();
+                    $('#loading').hide();
+                    $('#menu').toggle('collapse')
                 },
                 button_handler:function(ev){                            
                     var name = ($(ev.currentTarget).attr('name'));

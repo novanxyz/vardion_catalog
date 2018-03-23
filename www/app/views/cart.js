@@ -320,7 +320,10 @@ define(function(require){
                     });       
             //});            
         },
-        handle_swipe:function(ev){
+        handle_swipe:function(ev){            
+            if (this.get_notification()){
+                return Utils.toast('There is problem with your order.\nPlease resolve it first');
+            }
             var curTarget = $(ev.currentTarget);  
             ev = ev.originalEvent;
             if (ev.detail.dir === 'up'){// && curTarget.parent().offsetTop() > 0){
