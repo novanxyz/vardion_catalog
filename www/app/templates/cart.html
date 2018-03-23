@@ -72,7 +72,7 @@
                 </div>
                 <t t-if='! get_notification()'>
                 <div class="container note">
-                    <textarea t-att-readonly="(cart.get('state') == 'draft' ? '1' : '0')" name="note" class="note" placeholder="Order Note... " style="width: 100%"><t t-esc="cart.get('note')"/></textarea>
+                    <textarea t-att-readonly="(cart.get('state') == 'draft' ? '1' : '0')" name="note" class="note" placeholder="Order Note... " style="width: 100%"><t t-esc="cart.get('note') || '' "/></textarea>
                 </div>                    
                 </t>
             </div>            

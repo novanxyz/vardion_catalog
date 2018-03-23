@@ -18,7 +18,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return this.get('price_unit') * this.get_qty();
         },
         get_display_name:function(){            
-            return this.product.get_display_name() + this.get('note');
+            return this.product.get_display_name() + (this.get('note') || '' );
         },
         get_subtotal:function(){
             return this.get_qty()  * this.get('price_unit') * ((100-this.get('discount'))/100);
