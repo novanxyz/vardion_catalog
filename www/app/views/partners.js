@@ -77,9 +77,9 @@ define(function(require){
        partner_selected:function(ev){           
            var partner_id = this.$el.find('li.item input[name=partner]:checked').val();
            var partner = _(this.partners).find(function (p) {return p.id == partner_id;});           
-           console.log(partner_id,partner);
            $('.form.partner').hide();
            if (! partner) return;
+           $('button[role=ok]').addClass('btn-primary');
            this.$el.find('#email').val('');
            this.$el.find('#phone').val('');
            this.$el.find('#name').val(partner.name);
@@ -107,9 +107,10 @@ define(function(require){
             return rpc.call('find_or_create',[partner], {context:this.app.context}  ).then(function(res){                                
                     partner.id = res;
                     self.partners.push(partner);
-                    var added = $('li.item[data-id='+res+']');
-                    added.click();
                     self.render();
+                    var added = $('li.item[data-id='+res+']');
+                    $('input:radio',added).click();
+                    console.log(partner,added);                    
                     self.$el.find('.list.partner').animate( {scrollTop: added.offset().top - 56    },500);
 //                }catch (ex){
 //                    console.log("ERROR REGISTER CONTACT",ex);
