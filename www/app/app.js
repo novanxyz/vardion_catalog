@@ -66,7 +66,7 @@ define(function(require) {
             $('a[name=guest_login]').on('click',_.bind(this.guest_login,this));            
         },
         open_popup:function(name,params){
-         console.log(this,this.popup[name],params);
+            console.log(this,this.popup[name],params);
           return this.popup[name].show(params);  
         },
         guest_login:function(){            

@@ -19,6 +19,10 @@ define(function(require){
     };
     return Base.Popup.extend({
         _name : 'partners',    
+        events:{
+            'click btn[name=open_contact]': 'open_contact',
+            
+        },
        initialize:function(app){
            Base.Popup.prototype.initialize.apply(this,arguments);
            var models = {'res.partner/search_read':
@@ -27,33 +31,17 @@ define(function(require){
                         };
            this.ready = Utils.get_data(models);
        },
-       show:function(params){
+       bind_events:function(){
+           console.log(this.$el);
+           $('input:radio').change(_.bind(this.partner_selected,this));           
+           $('#search_input').keyup(_.bind(this.search,this));
+       },       
+       show:function(params){           
            this.partners = Utils.get_partners();
            this.prev_view = $('body main:visible').hide();
-           this.render();
-                     
+           this.render();                     
            var self = this;
-           this.$el.off('keyup','#search_input');
-           this.$el.on('keyup','#search_input',function(ev){
-               var q = $(this).val().trim().toLowerCase();
-               console.log(ev.charCode,q);
-               if (q.length < 3) return $('li.item').show();
-               $('li.item').hide();
-               _(self.partners).each(function(p){
-                   if (p.name.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
-                   if (p.phone && p.phone.indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
-                   if (p.street && p.street.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
-                   if (p.city && p.city.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
-                   if (p.barcode && p.barcode.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
-               });               
-               console.log($('li.item:visible').length)
-               if ($('li.item:visible').length == 1 ) {
-                    $('li.item:visible input').click();                    
-                }
-                if (ev.keyCode == 13 && $('li.item:visible input:checked').length == 1 ){
-                    $('.btn[role=ok]').click();        
-                }               
-           });
+           this.bind_events();
            var def = $.Deferred();
            $('.btn[role=ok]').click(function(){               
                var vals = self.$el.find('input[name=partner]').val();
@@ -70,6 +58,38 @@ define(function(require){
        close:function(){
            this.prev_view.show();
            this.$el.remove();           
+       },
+       search:function(ev){
+            var q = $(this).val().trim().toLowerCase();            
+            if (q.length < 3) return $('li.item').show();
+            $('li.item').hide();
+            _(this.partners).each(function(p){
+                if (p.name.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
+                if (p.phone && p.phone.indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
+                if (p.street && p.street.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
+                if (p.city && p.city.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
+                if (p.barcode && p.barcode.toLowerCase().indexOf(q) >=0 ) return $('li.item[data-id='+p.id+']').show();
+            });                           
+            if ($('li.item:visible').length == 1 ) {
+                $('li.item:visible input').click();                    
+            }
+            if (ev.keyCode == 13 && $('li.item:visible input:checked').length == 1 ){
+                $('.btn[role=ok]').click();        
+            }                 
+       },
+       partner_selected:function(ev){           
+           var partner_id = this.$el.find('li.item input[name=partner]:checked').val();
+           var partner = _(this.partners).find(function (p) {return p.id == partner_id;});           
+           console.log(partner_id,partner);
+           $('.form.partner').hide();
+           if (! partner) return;
+           this.$el.find('#email').val('');
+           this.$el.find('#phone').val('');
+           this.$el.find('#name').val(partner.name);
+           if (partner.phone) this.$el.find('#phone').val(partner.phone);
+           if (partner.email) this.$el.find('#email').val(partner.email);
+           $('.form.partner').show();
+           setTimeout(function(){$('.form.partner').hide();},12000);
        },
        open_contact:function(){
            var self = this;

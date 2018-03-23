@@ -220,7 +220,12 @@ define(function(require){
         },
         confirm_order:function(){
             var rpc = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);
-            var self = this;
+            var self = this;            
+            if (this.auto_save){
+                clearTimeout(this.auto_save);
+                this.cart.save();
+            }
+            
             var def = $.Deferred();
             if ( ['draft','sent'].indexOf(this.cart.get('state')) < 0 ) {
                 Utils.toast(this.cart.get_name() + ' already confirmed or canceled');

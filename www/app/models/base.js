@@ -111,11 +111,11 @@ define(function(require){
                 show:function(){
                     $('main').show();
                     $('#loading').hide();
-                    $('#menu').toggle('collapse')
+                    $('#menu').hide('collapse');
                 },
                 button_handler:function(ev){                            
                     var name = ($(ev.currentTarget).attr('name'));
-                    console.log(this,this.prototype,this.__proto__[name]);
+//                    console.log(this,this.prototype,this.__proto__[name]);
                     return _.result(this,name);//.call(this,arguments);
                     return this.__proto__[name].call(this,arguments);
                     return _.bind(this.name,this).call(this,arguments);

@@ -6,41 +6,35 @@
     <div class="list picker partner container">
         <form>
         <ul class="list-group">
-            <li  t-foreach="partners" t-as="partner" t-att-data-id="partner.id" t-att-class="'item partner list-group-item ' + partner.type" >                
-                
-                <label class="radio item text" t-att-for="'#radio-'+partner.id" > 
+            <li  t-foreach="partners" t-as="partner" t-att-data-id="partner.id" t-att-class="'item partner list-group-item ' + partner.type" >                                
+                <div class="radio item text"  > 
                     <input name="partner" t-att-id="'radio-'+ partner.id"  t-att-value="partner.id" type="radio">
-                    <span class="outer"><span class="inner"></span></span><t t-esc="partner.name"/>
-                </label>
-
+                    <label t-att-for="'radio-'+partner.id"><t t-esc="partner.name"/></label>                    
+                </div>
             </li>
         </ul>
         </form>
     </div>
-    <div class="form pickker partner hide">        
+    <div class="form picker partner container" style="display: none">        
         <div class="form-group">
             <label for="user">Name</label>
-            <input type="text" class="form-control" id="user" 
-                   placeholder="Enter Name" name="name"/>
+            <input type="text" class="form-control" id="name" readonly="1" placeholder="Enter Name" name="name">
         </div>
         <div class="form-group">
           <label for="phone">Phone Number</label>
-          <input type="tel" class="form-control" id="phone" 
-               placeholder="Enter Phone Number" name="phone"/>
+          <input type="tel" class="form-control" id="phone" readonly="1" placeholder="Enter Phone Number" name="phone">
         </div>
         <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" class="form-control" id="email" 
-                   placeholder="Enter Email" name="email"/>
+            <input type="email" class="form-control" id="email"  readonly="1" placeholder="Enter Email" name="email">
         </div>
         <div class="form-group">          
         </div> 
 
     </div>
-    <div class="button-footer">
-        <button class="btn btn-primary" name="open_contact" role="cancel">Open Contact</button>
-        <button class="btn btn-default pull-right" name="cancel" role="cancel">Cancel</button>
-        <button class="btn btn-primary pull-right" name="ok" role="ok">Ok</button>
-        
+    <div class="button-footer container ">
+        <button class="btn btn-primary" name="open_contact" ><i class="material-icons">contacts</i><span>Contacts</span></button>
+        <button class="btn btn-primary pull-right" name="ok" role="ok"><i class="material-icons">check</i><span>Select</span> </button>
+        <button class="btn btn-default pull-right" name="cancel" role="cancel"><i class="material-icons">close</i><span>Close</span></button>
     </div>
 </section>
