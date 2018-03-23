@@ -174,6 +174,7 @@ define(function(require){
 ////            }else{                
 ////                return '<span>Partner not locally saved</span><a class="pull-right btn" name="update_contact"><i class="material-icons">account_box</i></a>';                
 //            }            
+            return '';
         },
         update_note:function(){            
             this.cart.set('note',$('textarea[name=note]').val());
