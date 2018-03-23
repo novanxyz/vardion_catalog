@@ -140,22 +140,25 @@ var Utils = {
         return contact;
     },
     toast:function(msg){
+        var def = $.Deferred();
         window.plugins.toast.showWithOptions({
-          message: msg,
-          duration: "short", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
-          position: "top",
-          addPixelsY: 175,  // added a negative value to move it up a bit (default 0)
-//                  addPixelsX: 50,
-          styling: {
-            opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
-//                    backgroundColor: '#FF0000', // make sure you use #RRGGBB. Default #333333
-//                    textColor: '#FFFFFF', // Ditto. Default #FFFFFF
-//                    textSize: 20.5, // Default is approx. 13.
-            cornerRadius: 20, // minimum is 0 (square). iOS default 20, Android default 100
-            horizontalPadding: 20, // iOS default 16, Android default 50
-            verticalPadding: 16 // iOS default 12, Android default 30
-          }
-        });
+                message: msg,
+                duration: "short", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
+                position: "top",
+                addPixelsY: 175,  // added a negative value to move it up a bit (default 0)
+      //                  addPixelsX: 50,
+                styling: {
+                  opacity: 0.75, // 0.0 (transparent) to 1.0 (opaque). Default 0.8
+      //                    backgroundColor: '#FF0000', // make sure you use #RRGGBB. Default #333333
+      //                    textColor: '#FFFFFF', // Ditto. Default #FFFFFF
+      //                    textSize: 20.5, // Default is approx. 13.
+                  cornerRadius: 20, // minimum is 0 (square). iOS default 20, Android default 100
+                  horizontalPadding: 20, // iOS default 16, Android default 50
+                  verticalPadding: 16 // iOS default 12, Android default 30
+                },
+            },function(res){def.resolve(res);}
+        );
+        return def;
     },
     get_partners:function(){
         var db = localStorage[this.app.DB_ID + '_res_partner'] || '[]';

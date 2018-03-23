@@ -124,9 +124,13 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 this.warehouse = _.object(['id','name'],json.warehouse_id);
                 json.warehouse_id = json.warehouse_id[0];
             }
-            if (json.partner_id && _.isArray(json.partner_id)){
-                this.partner = _.object(['id','name'],json.partner_id);
-                json.partner_id = json.partner_id[0];
+            if ( json.partner_id ) {
+                if (_.isArray(json.partner_id)) {            
+                    this.partner = _.object(['id','name'],json.partner_id);
+                    json.partner_id = json.partner_id[0];
+                }else{
+                    this.partner = _(Utils.get_partners()).find(function(p){return p.id == json.partner_id;});
+                } 
             }
             this.set(json);
             //console.log(this,json);

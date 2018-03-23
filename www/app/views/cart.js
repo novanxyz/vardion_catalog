@@ -57,12 +57,8 @@ define(function(require){
                 this.select_cart(cart_id);
             }
             
-            this.ready.done(function(){                                
-//                if (self.cart.get('partner_id')){
-//                    //self.select_partner(self.cart.get('partner_id'));
-//                }else{
-                    self.render();
-//                }                
+            this.ready.done(function(){
+                self.render();
                 self.show();
             });
         },        
@@ -86,7 +82,7 @@ define(function(require){
         add_cart:function(){
             var ids = this.cart_ids.filter(isNaN);
             if (ids.length){
-                return Utils.toast("Can only create one unsubmitted order.\nPlease confirm current order first.");
+                return Utils.toast("Can only create ONE unsubmitted order.\nPlease confirm current order first.");
             }            
             this.cart = new Cart({'user_id':this.app.user.uid,'date_order':new Date()},this.app);
             this.cart.save();            
@@ -140,19 +136,29 @@ define(function(require){
                         self.cart.save();
                         self.render();
                     });            
-        },        
-        update_contact:function(){
-            if (! this.contact) {
-                this.contact =  navigator.contacts.create(Utils.partnerToContact(this.cart.partner));
-            }
-            var self = this;
-            if (!self.contact.ims){self.contact.ims = [];}
-            this.contact.ims.push(new ContactField('vardion',this.cart.partner.id,true));
-            this.contact.save(function(ret){console.log(self.contact, ' saved',ret);},null);
         },
-        
-        open_contact:function(){
+        select_report:function(){            
+            var options = [{'text':'Sale Order','value': this.app.url + '/report/pdf/sale.report_saleorder/' + this.cart.id }];
             
+            for (var p in this.cart.get('picking_ids')) {                    
+                options.push({'text':'Delivery ' , 
+                    value:this.app.url + '/report/pdf/stock.report_picking/'+ this.cart.get('picking_ids')[p] })
+            };
+            for (var i in this.cart.get('invoice_ids')) {                    
+                options.push({'text':'Invoice ' , 
+                    value:this.app.url + '/report/pdf/account.report_invoice/'+ this.cart.get('invoice_ids')[i] })
+            };
+            console.log(options);
+            var picker = {'title': 'Select Report',
+                          'items': options,
+                          'doneButtonLabel': 'Get Report',
+                };
+            return window.plugins.listpicker.showPicker(picker,
+                    function(item){
+                        console.log(item);
+                        return navigator.app.loadUrl(item, { openExternal: true });
+                        
+                    });       
         },
         get_notification:function(){
             $('.order .alert').show();            
@@ -238,7 +244,7 @@ define(function(require){
         check_status:function(ev){           
            if ( isNaN(this.cart.id) ) return this.confirm_order();
            
-           var order_fields = ['name','state','order_line','date_order','client_order_ref','warehouse_id','pricelist_id','invoice_status','amount_untaxed','amount_tax','payment_term_id','amount_total'];
+           var order_fields = ['name','state','order_line','date_order','client_order_ref','warehouse_id','pricelist_id','invoice_status','amount_untaxed','amount_tax','payment_term_id','amount_total','picking_ids','invoice_ids'];
            var line_fields  = ['name','product_id','price_unit','discount','uom_id','tax_id','product_uom_qty','qty_delivered','qty_invoiced'];
                       
            var rpc1 = this.app.get_rpc('/web/dataset/call_kw/' + this.cart._model);           
@@ -257,7 +263,7 @@ define(function(require){
                })               
            });
            return $def.always(function(){
-                  $('#order-status').modal('show');
+                $('#order-status').toggle('modal');
            });           
         },        
         print:function(){
@@ -313,7 +319,7 @@ define(function(require){
             ev = ev.originalEvent;
             if (ev.detail.dir === 'up'){// && curTarget.parent().offsetTop() > 0){
                $('#cart-buttons').show();
-               $('#cart-buttons').blur(function(){$(this).hide();});
+//               $('#cart-buttons').blur(function(){$(this).hide();});
            }
            if (ev.detail.dir === 'down'){// && curTarget.parent().offsetTop() > 0){
                $('#cart-buttons').hide();

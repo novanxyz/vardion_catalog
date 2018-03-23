@@ -43,6 +43,10 @@ define(function(require){
         },        
         add_product:function(ev){            
             var card = $(event.target).closest('div.prod');                        
+            
+            if (this.cart.get('state') != 'draft' || this.cart.get('state') != 'sent'  ){
+                return Utils.toast('Cannot add product to confirmed order.\nPlease add new cart first.');
+            }
             var prod_id = card.data('id');            
             var product = this.products.get(prod_id);            
             var options = {qty:1};

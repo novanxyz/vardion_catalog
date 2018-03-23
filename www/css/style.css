@@ -94,7 +94,7 @@ main {margin-top: 56px}
     vertical-align: top
 }
 .cart-toggle{padding-top: 6px;}
-.order .alert:empty{display: none}
+.order .alert:empty{display: none !important}
 .order .alert:empty + .footer a.confirm{font-weight: 300;}
 button.navbar.navbar-toggle {
     background: none;
