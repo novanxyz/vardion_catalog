@@ -88,8 +88,8 @@ define(function(require) {
             
             try{
                 if ( hash in this && this.ready.state != 'pending' )
-                return _.result(this,hash);
-                console.log(hash, this.default_action);
+                    return _.result(this,hash);
+//                console.log(hash, this.default_action);
                 this.default_action(params);
             }catch (x){
                 console.log(x);

@@ -6,15 +6,15 @@ define(function(require){
   return Base.Page.extend({
     _name : 'login',    
     events: {
-        'keypress input': 'enable_button',
+        'keyup input': 'enable_button',
     },
     enable_button:function(){
-        if ($('.login-form.user:visible')) {
-            if ($('#username').val() && $('#username').val()) return $('a[name=do_login]').removeAttr('disabled');
-            return $('a[name=do_login]').attr('disabled','disabled');
+        if ($('.login-form.user:visible').length) {
+            if ($('#username').val().trim() && $('#username').val().trim() ) return $('[name=do_login]').removeAttr('disabled');
+            return $('[name=do_login]').attr('disabled','disabled');
         }else{
-            if ($('#name').val() && $('#email').val() && $('#phone').val() ) return $('a[name=guest_login]').removeAttr('disabled');
-            return $('a[name=guest_login]').attr('disabled','disabled');
+            if ($('#name').val().trim() && $('#email').val().trim() && $('#phone').val().trim() ) return $('[name=guest_login]').removeAttr('disabled');
+            return $('[name=guest_login]').attr('disabled','disabled');
         }
         
     },
