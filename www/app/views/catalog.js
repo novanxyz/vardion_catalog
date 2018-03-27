@@ -24,7 +24,7 @@ define(function(require){
           if (app.cart)this.set_order(app.cart);
         },        
         start:function(){
-            var self  = this;
+            var self  = this;            
             this.ready.then(function(products){                
                 self.app.get_product = function(product_id){                    
                     return self.products.get(product_id);                    

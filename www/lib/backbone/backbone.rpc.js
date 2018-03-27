@@ -125,6 +125,7 @@
         query: function (fn, params, callback) {
             var id = String((new Date()).getTime()),
                 ret = null;
+//            console.log(arguments);
             this.responseID = id;
             // generate unique request id (timestamp)
             // check if params and the function name are ok, then...            
@@ -193,7 +194,7 @@
               params.method = method;
           }
 //          console.log(params,model,method);
-          if (params.hasOwnProperty('args') && params.args != arguments[arguments.length-1] ){
+          if (params && params.hasOwnProperty('args') && params.args != arguments[arguments.length-1] ){
               params.kwargs =arguments[arguments.length-1];
           }
           var ret = $.Deferred();  

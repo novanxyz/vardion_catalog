@@ -57,7 +57,19 @@ requirejs.config({
 require(['app'], function(App) {
 //var App = require('app');
 function onDeviceReady() {          
-    var config = {'dbname': 'pos','server_url':'http://pos.vardion.com?db=pos'}   
+    var config = {'dbname': 'pos','server_url':'http://pos.vardion.com?db=pos'} ;
+        if (localStorage[App.prototype._name]){
+//            var  license = App.prototype.decode(atob(localStorage[App.prototype._name]));
+            var  license = localStorage[App.prototype._name];
+            var test_config = JSON.parse(license);
+            if ( 'server_url' in test_config ){
+                config = test_config;
+            }else{
+                alert("Your license doesn't include mobile apps contract.\nPlease contact Vardion for license update");
+                localStorage.removeItem(App.prototype._name);
+                alert("Using Demo Mode");
+            }
+        }
     var catalog = new App(config);
     catalog.start();    
     window['app'] = catalog;

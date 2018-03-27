@@ -56,13 +56,13 @@ var Utils = {
             var method = model.split('/').pop();                
             return rpc.call(method,args,context).then(save_result);
         }
-        console.log(models);    
+//        console.log(models);    
         return Object.keys(models).reduce(function(prev,model){
             var _model  = model.split('/').shift().replace(/\./g,'_');
             var args    = _.isArray(models[model])? models[model] : models[model]['args'];            
             var loaded  = _.isArray(models[model]) ? function(res){localStorage[ls_name +'_'+_model] = JSON.stringify(res);}:models[model]['loaded']; 
             if ( localStorage[ls_name +'_'+_model] && _.isArray(models[model])  ) return prev;
-            console.log(model,_model,args,loaded);
+//            console.log(model,_model,args,loaded);
             return prev.then(function(){return request(model,args,loaded ) ; });
         },Promise.resolve());  
     },
@@ -85,7 +85,7 @@ var Utils = {
                 });
             });
         },function(err){
-            console.log(err,folderpath);
+//            console.log(err,folderpath);
         });
 
     },

@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
     var Backbone  = require('rpc');
     var Product = require('models/product');
+    var LoginView = require('views/login');
     var CatalogView = require('views/catalog');
     var CartView = require('views/cart');    
     var PartnerView = require('views/partners');    
@@ -27,6 +28,7 @@ define(function(require) {
           this.dbname   = 'dbname' in config ? config.dbname : url.searchParams.get('db');
           this.DB_ID    = this._name + '@' + this.dbname;          
           window.DB_ID  = this.DB_ID;
+          this.config   = config;
           this.modules  = config.modules || [] ;
           this.ready    = this.ensure_db();          
           Utils.app     = this;
@@ -37,15 +39,15 @@ define(function(require) {
             this.catalogView = new CatalogView(this);
             this.popup = {};
             this.popup['partner'] = new PartnerView(this);
-            console.log(this.popup);
+//            console.log(this.popup);
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
-            rets.push(this.catalogView.prepare());
-            rets.push(this.cartView.prepare());
+            rets.push(this.catalogView.prepare().then(function(){$('nav > a:first').attr('href','#catalog');}) );
+            rets.push(this.cartView.prepare().then(function(){$('a[name=save_cart]').removeClass('hide');}) );
             return $.when.apply($, rets).promise();
         },
         default_action:function(params){
-            return ;
+            return this.open_login;
         },
         open_cart:function(params){            
             this.cartView.start();
@@ -58,37 +60,15 @@ define(function(require) {
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
         },
-        open_login:function(params){            
-            $('nav').hide();
-            $('#loading').hide();
-            $('#login').show();            
-            $('a[name=user_login]').on('click',_.bind(this.do_login,this));
-            $('a[name=guest_login]').on('click',_.bind(this.guest_login,this));            
+        open_login:function(params){                                    
+            var logView = new LoginView(this);
+            return logView.start();            
         },
         open_popup:function(name,params){
-            console.log(this,this.popup[name],params);
-          return this.popup[name].show(params);  
+//            console.log(this,this.popup[name],params);
+            return this.popup[name].show(params);  
         },
-        guest_login:function(){            
-            var params = {'name'    : $('[name=name]').val(),
-                          'phone'   : $('[name=phone]').val(),
-                          'email'   : $('[name=email]').val(),
-                      }                      
-            var rpc = new Backbone.Rpc({url: this.url + '/web/session/authenticate'});
-            console.log(params);
-        },
-        do_login:function(){
-          var self = this;          
-          var rpc = new Backbone.Rpc({url: this.url + '/web/session/authenticate'});
-          var params = { db:this.dbname,
-                         login:$('#username').val(),
-                         password:$('#password').val() };
-          this.show_loading();
-          localStorage.clear();
-          return rpc.call(params,null).then(function(res){                            
-              self.ensure_db(res.result).done(_.bind(self.default_action,self));
-          });
-        },
+
         open_about:function(){
             var about = new AboutView(this);
             about.start();
@@ -106,15 +86,21 @@ define(function(require) {
             var [hash,params]  = window.location.hash.split(/[\/&]/);                                    
             hash = 'open_' + hash.substr(1);
             
-            if (hash in this)
+            try{
+                if ( hash in this && this.ready.state != 'pending' )
                 return _.result(this,hash);
-            this.default_action(params);
+                console.log(hash, this.default_action);
+                this.default_action(params);
+            }catch (x){
+                console.log(x);
+            }
+            
         },
         ensure_db:function(context){            
             if (!context){
                 context =  JSON.parse(localStorage[this.DB_ID + '_context'] || '{}' );                            
             }            
-            if (_.isEmpty(context)|| context.error){
+            if (_.isEmpty(context) || context.error ){
                 this.default_action = _.bind(this.open_login,this);
                 return $.Deferred().resolve();                
             }else{
@@ -125,10 +111,12 @@ define(function(require) {
             }                        
         },        
         show_loading:function(){
+          $('main').hide()  ;
           $('#loading').show();
         },
         hide_loading:function(){
           $('#loading').hide();  
+          $('main').show();
         },
         load_data:function(context){
           // load all data necessary for app;
@@ -210,7 +198,9 @@ define(function(require) {
             return new Backbone.Rpc(rpc_opts);        
         },
         handle_exception:function(err){
-            alert(err.message);
+            var msg = err.message;
+            msg += err.data && err.data.message ? "\n" + err.data.message : '';
+            alert(msg);
             $('#loading').hide();
         },
         get_product:function(product_id){

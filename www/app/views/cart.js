@@ -26,7 +26,7 @@ define(function(require){
 //          console.log(this.ready);
         },
         prepare:function(){
-            var models = { 'product.pricelist.item/search_read' : {'args': [[['currency_id','=',13]] ,[]] },
+            var models = { 'product.pricelist.item/search_read' : {'args': [[],[]] },
                            'account.payment.term/search_read'   : {'args': [[['active','=','true']],[]]},
                            'account.tax/search_read'            : {'args': [[['type_tax_use','=','sale']],[]]},
                            'sale.order/default_get'             : {'args': [["origin","order_line","currency_id","team_id","partner_id","amount_tax","delivery_count","company_id","note","picking_policy","state",
@@ -95,6 +95,7 @@ define(function(require){
             if (! cart ) return Utils.toast('Select order not available');
             cart = JSON.parse(cart);
             this.cart = new Cart(cart,this.app );
+            this.trigger('change:cart',this.cart);
             this.render();            
         },
         cancel_cart:function(){

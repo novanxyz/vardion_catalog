@@ -1,21 +1,56 @@
-<main class="login" style="display: none"> 
-<div class="px-lg-md login-page">
-    <div class="container">
-        <div id="loginform" >
-              <div class="img text-center">
-                  <img src="img/logo.png" style="width:50%" />
-              </div>
-              <div class="form-group">
-                <label for="username">Email address</label>
-                <input type="text" class="form-control" id="username" 
-                       aria-describedby="emailHelp" placeholder="Enter email" name="username"/>
-              </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input name="password" type="password" class="form-control" id="password" />
-              </div>
-              <a id="loginbutton" class="btn btn-primary btn-lg btn-block text-white">Submit</a>
-        </div>
-    </div>
-</div>
-</main>
+<main id="login" class="login page no-nav" style="display:none;margin-top:0px"> 
+            <div class="about" style="position: absolute;top:0; right: 0; width: 56px;height: 56px;padding: 4px 16px;">
+                <a href="#about"><i class="material-icons" style="font-size:32px">help</i></a>
+            </div>
+            <div class="px-lg-md login-page" style="margin-top: 112px">
+                <div class="container">
+                    <div id="loginform" >
+                          <div class="img text-center" style="margin-bottom:20px;">
+                              <img src="img/logo.png" style="width:50%" />
+                          </div>
+                        <div class="login-form user" id="loginuser">                          
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" tabindex="0"
+                                   aria-describedby="emailHelp" placeholder="Enter login" name="username" value="admin"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input name="password" type="password" class="form-control" id="password" value=""
+                                       placeholder="Enter Password" tabindex="1"/>
+                            </div>
+                            <div class="form-group">
+                                <a  tabindex="4" class="btn btn-default" style="border:2px solid #ffc107" onclick="$('.login-form').toggle()"><i class="material-icons">person</i></a>
+                                <a name="do_login" tabindex="2" disabled="disabled" class="btn btn-primary btn-lg text-white" style="width:calc(100% - 60px)">Login</a>                          
+                            </div>
+                        </div>
+                        <div class="login-form guest" id="loginguest" style="display: none">
+                            <div class="form-group">
+                              <label for="user">Name</label>
+                              <input type="text" class="form-control" id="name" 
+                                     placeholder="Enter Name" name="name"/>
+                            </div>
+                            <div class="form-group">
+                              <label for="phone">Phone Number</label>
+                              <input type="tel" class="form-control" id="phone" 
+                                   placeholder="Enter Phone Number" name="phone"/>
+                            </div>
+                            <div class="form-group">
+                              <label for="email">Email Address</label>
+                              <input type="email" class="form-control" id="email" 
+                                     placeholder="Enter Email" name="email"/>
+                            </div>
+                            <div class="form-group">
+                                <a name="guest_login" disabled="disabled"  class="btn btn-primary btn-lg text-white guest" style="width:calc(100% - 60px)" >Login As Guest</a>
+                                <a class="btn btn-default" style="border:2px solid #ffc107"  onclick="$('.login-form').toggle()" ><i class="material-icons">face</i></a>
+                            </div>
+                        </div>                          
+                    </div>
+                </div>
+            </div>
+            <div class="px-lg-md register-page" id="register">
+                <div class="container">
+                
+                </div>
+            </div>
+        </main>

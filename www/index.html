@@ -4,6 +4,8 @@
         <title>Vardion Catalog</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="referrer" content="unsafe-url" />
+
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="font/font.css">
         <link rel="stylesheet" href="css/style.css">
@@ -11,7 +13,10 @@
     </head>
     <body>
         <main id="login" class="login page no-nav" style="display:none;margin-top:0px"> 
-            <div class="px-lg-md login-page" style="margin-top: 56px">
+            <div class="about" style="position: absolute;top:0; right: 0; width: 56px;height: 56px;padding: 4px 16px;">
+                <a href="#about"><i class="material-icons" style="font-size:32px">help</i></a>
+            </div>
+            <div class="px-lg-md login-page" style="margin-top: 112px">
                 <div class="container">
                     <div id="loginform" >
                           <div class="img text-center" style="margin-bottom:20px;">
@@ -65,11 +70,12 @@
         </main>
         <header class="fixed-top">
         <nav class="navbar navbar-light bg-primary  text-white hide">
-            <a class="navbar-brand text-white" data-target="#catalog" href="#catalog"><b>Vardion Catalog</b></a>
+            <a class="navbar-brand text-white" data-target="#catalog" href="#"><b>Vardion Catalog</b></a>
             <button type="button" class="navbar navbar-toggle pull-right" data-toggle="collapse" data-target="#menu">
                 <i class="material-icons">more_vert</i>
             </button>
-            <a href="#cart" class="pull-right cart cart-toggle text-white btn" name="save_cart"><i class="material-icons">shopping_cart</i>
+            <a href="#cart" class="pull-right cart cart-toggle text-white btn hide" name="save_cart">
+                <i class="material-icons">shopping_cart</i>
                 <span class="cart-num">0</span>
             </a>
         </nav>
