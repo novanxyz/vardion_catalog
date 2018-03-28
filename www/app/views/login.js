@@ -15,8 +15,7 @@ define(function(require){
         }else{
             if ($('#name').val().trim() && $('#email').val().trim() && $('#phone').val().trim() ) return $('[name=guest_login]').removeAttr('disabled');
             return $('[name=guest_login]').attr('disabled','disabled');
-        }
-        
+        }        
     },
     do_login:function(){
         console.trace();
@@ -26,8 +25,7 @@ define(function(require){
                        login   : $('#username').val(),
                        password: $('#password').val() };
         this.show_loading();
-        localStorage.clear();
-        
+        localStorage.clear();        
         localStorage[this.app._name] = JSON.stringify(this.app.config);
         return rpc.call('authenticate',params,{}).then(function(res){                            
             console.log(res);

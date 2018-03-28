@@ -111,7 +111,7 @@ define(function(require){
                 show:function(){
                     $('main').show();
                     $('#loading').hide();
-                    $('#menu').hide('collapse');
+                    $('#menu').removeClass('show');
                 },
                 button_handler:function(ev){                            
                     var name = ($(ev.currentTarget).attr('name'));

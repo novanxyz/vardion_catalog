@@ -30,6 +30,7 @@ define(function(require) {
           window.DB_ID  = this.DB_ID;
           this.config   = config;
           this.modules  = config.modules || [] ;
+          if (config.theme){$('body').addClass(config.theme);}
           this.ready    = this.ensure_db();          
           Utils.app     = this;
         },
@@ -42,7 +43,7 @@ define(function(require) {
 //            console.log(this.popup);
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
-            rets.push(this.catalogView.prepare().then(function(){$('nav > a:first').attr('href','#catalog');}) );
+            rets.push(this.catalogView.prepare() );
             rets.push(this.cartView.prepare().then(function(){$('a[name=save_cart]').removeClass('hide');}) );
             return $.when.apply($, rets).promise();
         },
@@ -56,6 +57,7 @@ define(function(require) {
         },
         open_catalog:function(params){                  
             this.catalogView.set_order(this.cartView.cart);
+            $('nav > a:first').attr('href','#catalog');
             this.catalogView.start();
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
