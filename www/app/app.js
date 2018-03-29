@@ -84,7 +84,9 @@ define(function(require) {
             this.ready.done(_.bind(this.default_action,this));
             window.onhashchange = _.bind(this.do_route,this);            
         },
-        do_route:function(ev){            
+        do_route:function(ev){           
+            console.log(window.location.href);
+
             var [hash,params]  = window.location.hash.split(/[\/&]/);                                    
             hash = 'open_' + hash.substr(1);
             

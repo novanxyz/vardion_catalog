@@ -45,6 +45,11 @@ var decode = function(input) {
         localStorage[this.app._name] = license;     
         //restart the apps to load new configuration;
         window.location.reload();
+    },
+    logout:function(){
+        localStorage.clear();        
+        localStorage[this.app._name] = JSON.stringify(this.app.config);
+        window.location.reload();
     }
    
     

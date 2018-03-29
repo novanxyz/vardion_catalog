@@ -7,4 +7,15 @@
     <color name="colorPrimaryDark">#771616</color>
 
     <color name="colorAccent">#b71c1c</color>
+    
+ <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+           parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+ <!-- ActionBar styles -->
+    <style name="MyActionBar"
+           parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">#A97946</item>
+    </style> 
 </resources>

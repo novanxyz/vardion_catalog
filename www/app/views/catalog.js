@@ -44,7 +44,7 @@ define(function(require){
         add_product:function(ev){            
             var card = $(event.target).closest('div.prod');                        
             
-            if (this.cart.get('state') != 'draft' || this.cart.get('state') != 'sent'  ){
+            if ( ['draft','sent'].indexOf(this.cart.get('state')) < 0 ){
                 return Utils.toast('Cannot add product to confirmed order.\nPlease add new cart first.');
             }
             var prod_id = card.data('id');            
@@ -73,6 +73,7 @@ define(function(require){
         },
         load_more:function(ev){
             var self = this;
+            $('a[name=load_more]').hide();
             return this.products.fetch().done(
                     function(res){                        
                         self.products.save();

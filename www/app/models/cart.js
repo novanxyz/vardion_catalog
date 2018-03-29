@@ -21,7 +21,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return this.product.get_display_name() + (this.get('note') || '' );
         },
         get_subtotal:function(){
-            return this.get_qty()  * this.get('price_unit') * ((100-this.get('discount'))/100);
+            return this.get_qty()  * this.get('price_unit') * ((100-this.get('discount',0))/100);            
         },
         get_tax:function(){
             return 0;
@@ -78,7 +78,9 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                 line.set('qty', line.get('qty') + (options['qty'] || 1));
             }else{
                 this.orderlines.add( new Orderline( 
-                                        _.extend(options,{'product_id':product.id,price_unit:product.get_price() }), 
+                                        _.extend(options,{'product_id':product.id,
+                                                         'price_unit':product.get_price(),
+                                                         'discount':0 }), 
                                         {'product':product, 'order': this} ));           
                 line = this.orderlines.last();         
             }           
@@ -132,6 +134,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
                     this.partner = _(Utils.get_partners()).find(function(p){return p.id == json.partner_id;});
                 } 
             }
+            if (!json.state) json.state = 'draft';
             this.set(json);
             //console.log(this,json);
         },        
@@ -182,7 +185,7 @@ define(['models/base','models/product','localstorage','utils'],function(Base,Pro
             return 'SO#' + String(this.id).substr(-4);
         },
         get_total:function(){
-            return this.orderlines.reduce(function(p,c){
+            return this.orderlines.reduce(function(p,c){                
                 return p + c.get_subtotal();
             },0);
         },
