@@ -73,7 +73,7 @@ define(function(require){
         },
         load_more:function(ev){
             var self = this;
-            $('a[name=load_more]').hide();
+            $('a[name=load_more]').html('<img src="img/loading.svg"/>');
             return this.products.fetch().done(
                     function(res){                        
                         self.products.save();

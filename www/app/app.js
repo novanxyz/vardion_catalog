@@ -138,8 +138,7 @@ define(function(require) {
             delete this.user.currencies;            
             $.extend(this.qweb.default_dict,
                     {user:this.user, context:this.context, today:new Date(),isNaN:isNaN},
-                    Utils,
-                    
+                    Utils,                    
                     );                        
             var deffile = $.Deferred();
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {                   
