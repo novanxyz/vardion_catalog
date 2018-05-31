@@ -17,8 +17,7 @@ define(function(require){
             return $('[name=guest_login]').attr('disabled','disabled');
         }        
     },
-    do_login:function(){
-        console.trace();
+    do_login:function(){        
         var self = this;          
         var rpc = this.app.get_rpc('/web/session/authenticate');
         var params = { db      : this.app.dbname,

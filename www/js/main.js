@@ -57,7 +57,7 @@ requirejs.config({
 require(['app'], function(App) {
 //var App = require('app');
 function onDeviceReady() {          
-    var config = {'dbname': 'pos','server_url':'http://pos.vardion.com?db=pos'} ;
+    var config = {'dbname': 'stock','server_url':'http://stock.vardion.com'} ;
         if (localStorage[App.prototype._name]){
 //            var  license = App.prototype.decode(atob(localStorage[App.prototype._name]));
             var  license = localStorage[App.prototype._name];

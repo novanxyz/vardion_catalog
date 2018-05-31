@@ -1,0 +1,117 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "cordova-plugin-listpicker",
+        "scope": null,
+        "escapedName": "cordova-plugin-listpicker",
+        "name": "cordova-plugin-listpicker",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "D:\\work10\\android\\catalog"
+    ]
+  ],
+  "_from": "cordova-plugin-listpicker@latest",
+  "_id": "cordova-plugin-listpicker@2.2.2",
+  "_inCache": true,
+  "_location": "/cordova-plugin-listpicker",
+  "_nodeVersion": "5.9.1",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/cordova-plugin-listpicker-2.2.2.tgz_1459326968038_0.6221230588853359"
+  },
+  "_npmUser": {
+    "name": "aramgev",
+    "email": "aramgv@gmail.com"
+  },
+  "_npmVersion": "3.8.3",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "cordova-plugin-listpicker",
+    "scope": null,
+    "escapedName": "cordova-plugin-listpicker",
+    "name": "cordova-plugin-listpicker",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-listpicker/-/cordova-plugin-listpicker-2.2.2.tgz",
+  "_shasum": "0a576e642a6d30edff56ce885d8c4912250864fb",
+  "_shrinkwrap": null,
+  "_spec": "cordova-plugin-listpicker",
+  "_where": "D:\\work10\\android\\catalog",
+  "author": {
+    "name": "Robert Hovhannisyan"
+  },
+  "bugs": {
+    "url": "https://github.com/roberthovhannisyan/PhoneGap-Plugin-ListPicker/issues"
+  },
+  "cordova": {
+    "id": "cordova-plugin-listpicker",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "dependencies": {},
+  "description": "PhoneGap plugin to display a list picker dialog for Android and iOS.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "0a576e642a6d30edff56ce885d8c4912250864fb",
+    "tarball": "https://registry.npmjs.org/cordova-plugin-listpicker/-/cordova-plugin-listpicker-2.2.2.tgz"
+  },
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "gitHead": "24f697d917bc2cb657251301281e59319662107a",
+  "homepage": "https://github.com/roberthovhannisyan/PhoneGap-Plugin-ListPicker#readme",
+  "keywords": [
+    "phonegap",
+    "android",
+    "ios",
+    "list",
+    "picker",
+    "dialog",
+    "ecosystem:cordova",
+    "cordova-ios",
+    "cordova-android"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "aramgev",
+      "email": "aramgv@gmail.com"
+    },
+    {
+      "name": "roberthovhannisyan",
+      "email": "hovhannisyan.robert@gmail.com"
+    },
+    {
+      "name": "sargis.saradyan",
+      "email": "sargis.saradyan@armsoft.am"
+    },
+    {
+      "name": "suren1525",
+      "email": "suren1525@gmail.com"
+    }
+  ],
+  "name": "cordova-plugin-listpicker",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roberthovhannisyan/PhoneGap-Plugin-ListPicker.git"
+  },
+  "scripts": {},
+  "version": "2.2.2"
+}

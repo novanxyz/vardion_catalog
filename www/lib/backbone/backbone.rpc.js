@@ -176,7 +176,7 @@
             return ret;
         },
         call:function(model,method,params){
-          if (!method && !params) {
+          if (arguments.length == 1) {
               params = model;
           } 
           if ( _.isArray(method) || _.isObject(params) ){

@@ -5,6 +5,7 @@ define(function(require) {
     var LoginView = require('views/login');
     var CatalogView = require('views/catalog');
     var CartView = require('views/cart');    
+    var PageView = require('views/page');    
     var PartnerView = require('views/partners');    
     var AboutView = require('views/about');
     var HelpView = require('views/help');    
@@ -38,17 +39,20 @@ define(function(require) {
             var rets = [];                        
             this.cartView = new CartView(this);                  
             this.catalogView = new CatalogView(this);
+            this.pageView = new PageView(this);
             this.popup = {};
             this.popup['partner'] = new PartnerView(this);
 //            console.log(this.popup);
 //            console.log(typeof(this.cartView),typeof(this.catalogView));
 //            console.log(this.cartView,this.catalogView);
+            rets.push(this.pageView.prepare() );
             rets.push(this.catalogView.prepare() );
             rets.push(this.cartView.prepare().then(function(){$('a[name=save_cart]').removeClass('hide');}) );
             return $.when.apply($, rets).promise();
         },
         default_action:function(params){
-            return this.open_login;
+            var page = new PageView(this);
+            return page.start();
         },
         open_cart:function(params){            
             this.cartView.start();
@@ -79,6 +83,9 @@ define(function(require) {
             var help = new HelpView(this);
             help.start();
         },
+        open_page:function(){            
+            this.pageView.start();
+        },
         start:function(){
             Backbone.history.start();            
             this.ready.done(_.bind(this.default_action,this));
@@ -108,7 +115,7 @@ define(function(require) {
                 this.default_action = _.bind(this.open_login,this);
                 return $.Deferred().resolve();                
             }else{
-                this.default_action = _.bind(this.open_catalog,this);
+                this.default_action = _.bind(this.open_page,this);
                 localStorage[this.DB_ID + '_context'] = JSON.stringify(context);
                 localStorage[this.DB_ID + '_session_id'] = context.session_id;
                 return this.load_data(context);            
@@ -145,9 +152,10 @@ define(function(require) {
                 fs.root.getDirectory(self.dbname,{create:true},function(appdir){                     
                     self.dir = appdir;    
                     self.data_dir = appdir.nativeURL;
-//                    appdir.getFile('templates.xml' ,{create:false},
-//                                    _.bind(self.load_templates,self),
-//                                    _.bind(self.fetch_templates,self));
+                    console.log(appdir);
+                    appdir.getFile('templates.xml' ,{create:false},
+                                    _.bind(self.load_templates,self),
+                                    _.bind(self.fetch_templates,self));
                     deffile.resolve(self);
                 });
             });                     
@@ -160,6 +168,7 @@ define(function(require) {
             fileEntry.file(function (file) {                
                 var reader = new FileReader();
                 reader.onloadend = function() {                    
+                    //console.log(this,fileEntry,this.result);
                     self.qweb.add_template(this.result);
                     deffile.resolve(self);
                 };
@@ -178,7 +187,8 @@ define(function(require) {
         fetch_templates:function(fileEntry){
             var self = this;
             console.log(this,fileEntry);
-            if (!this.modules.length) return;
+            this.modules = ['website'];
+            if (!this.modules.length) return;            
             $.get(this.url + '/web/webclient/qweb?mods='+ this.modules.join(',') ).then(
                 function(resp){                                     
                     self.dir.getFile('templates.xml',{create:true},function(fileEntry){
